@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.babel.basedata.mapper.UserRoleMapper" >
+  <resultMap id="BaseResultMap" type="com.babel.basedata.model.UserRolePO" >
+    <!--
+      WARNING - @mbggenerated
+    -->
+    <id column="cid" property="cid" jdbcType="DECIMAL" />
+    <result column="user_id" property="userId" jdbcType="DECIMAL" />
+    <result column="role_id" property="roleId" jdbcType="DECIMAL" />
+    <result column="is_default" property="isDefault" jdbcType="INTEGER" />
+    <result column="job_type" property="jobType" jdbcType="INTEGER" />
+    <result column="start_date" property="startDate" jdbcType="TIMESTAMP" />
+    <result column="end_date" property="endDate" jdbcType="TIMESTAMP" />
+    <result column="status" property="status" jdbcType="INTEGER" />
+    <result column="if_del" property="ifDel" jdbcType="INTEGER" />
+    <result column="create_user" property="createUser" jdbcType="DECIMAL" />
+    <result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
+    <result column="modify_user" property="modifyUser" jdbcType="DECIMAL" />
+    <result column="modify_date" property="modifyDate" jdbcType="TIMESTAMP" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    <!--
+      WARNING - @mbggenerated
+    -->
+    cid, user_id, role_id, is_default, job_type, start_date, end_date, status, if_del, create_user, 
+    create_date, modify_user, modify_date, remark
+  </sql>
+  
+  <select id="findUserRoleByJobTypes" resultType="com.babel.basedata.model.UserRolePO">
+  	SELECT
+		u.name as userName, u.wx_union_id as userUnionId, r.name as roleName, ur.cid, ur.job_type as jobType
+			, ur.user_id as userId, ur.role_id as roleId, ur.is_default as isDefault
+			, ur.start_date as startDate, ur.end_date as endDate, ur.remark
+	FROM
+		tf_user_role ur,
+		tf_user u,
+		tf_role r
+	WHERE
+		u.if_del = 0
+	AND u. STATUS = 1
+	AND r.`status` = 1
+	AND r.if_del = 0
+	AND ur.if_del = 0
+	AND ur.user_id = u.cid
+	AND ur.role_id = r.cid
+	AND ur. STATUS = 1
+	<if test="jobTypes!=null"> 
+		AND ur.job_type IN 
+		<foreach collection="jobTypes" index="index" item="item" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</if>
+	<if test="dataDate!=null"> 
+		<![CDATA[ AND ur.start_date <= #{dataDate,jdbcType=TIMESTAMP} ]]>
+		AND (
+			ur.end_date > #{dataDate,jdbcType=TIMESTAMP}
+			OR ur.end_date IS NULL
+		)
+	</if>
+	<if test="searchDate!=null"> 
+		AND ur.modify_date>=#{searchDate,jdbcType=TIMESTAMP}
+	</if>
+  </select>
+</mapper>

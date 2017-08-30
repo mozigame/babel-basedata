@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.babel.basedata.mapper.WhiteListMapper" >
+    <resultMap id="BaseResultMap" type="com.babel.basedata.model.WhiteListPO" >
+    <!--
+      WARNING - @mbggenerated
+    -->
+		<id column="cid" property="cid" jdbcType="DECIMAL" />
+		<result column="white_type_id" property="whiteTypeId" jdbcType="DECIMAL" />
+		<result column="content" property="content" jdbcType="VARCHAR" />
+		<result column="status" property="status" jdbcType="INTEGER" />
+		<result column="if_del" property="ifDel" jdbcType="INTEGER" />
+		<result column="remark" property="remark" jdbcType="VARCHAR" />
+		<result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
+		<result column="create_user" property="createUser" jdbcType="DECIMAL" />
+		<result column="modify_user" property="modifyUser" jdbcType="DECIMAL" />
+		<result column="modify_date" property="modifyDate" jdbcType="TIMESTAMP" />
+	</resultMap>
+  <sql id="Base_Column_List" >
+    <!--
+      WARNING - @mbggenerated
+    -->
+    cid, white_type_id, content, status, if_del, remark, create_date, create_user, modify_user, modify_date
+  </sql>
+  
+  <sql id="findWhiteListListByPage_Where_Clause" >
+  		where if_del=0
+  		
+  		<!--
+  		<if test="param.name!=null">
+  			and (name_cn like CONCAT('%',#{param.nameCn},'%') and name_en like CONCAT('%',#{param.nameCn},'%'))
+  			and (name like #{param.name} or name like #{param.name})
+  		</if>
+  		-->
+  </sql>
+  
+  <select id="findWhiteListListByPage"  resultMap="BaseResultMap">
+  	 select 
+    <include refid="Base_Column_List" />
+    from tf_white_list
+    <include refid="findWhiteListListByPage_Where_Clause" />
+     limit #{page.pageBegin} , #{page.pageSize}
+    
+  </select>
+  
+  <select id="findWhiteListListByPageCount" resultType="int" >
+  	select count(*) from tf_white_list
+  	 <include refid="findWhiteListListByPage_Where_Clause" />
+  </select>
+</mapper>

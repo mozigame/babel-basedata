@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" 
+	xmlns:aop="http://www.springframework.org/schema/aop" 
+	xmlns:context="http://www.springframework.org/schema/context" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xsi:schemaLocation="http://www.springframework.org/schema/aop   
+        http://www.springframework.org/schema/aop/spring-aop-4.0.xsd   
+        http://www.springframework.org/schema/beans   
+        http://www.springframework.org/schema/beans/spring-beans-4.0.xsd   
+        http://www.springframework.org/schema/context   
+        http://www.springframework.org/schema/context/spring-context-4.0.xsd"
+	default-lazy-init="false">
+
+	<!-- 采用注释的方式配置bean -->
+	
+
+	<!-- 配置要扫描的包 -->
+	<context:component-scan base-package="com.babal.basedata.service" />
+
+	
+	<bean id ="taskExecutor"  class ="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor" > 
+	    <property name ="corePoolSize" value ="5" /> 
+	    <property name ="keepAliveSeconds" value ="300" /> 
+	    <property name ="maxPoolSize" value ="10" /> 
+	    <property name ="queueCapacity" value ="25" /> 
+	  </bean>
+	
+	<!-- 这个类，容器启动时加载，以便于加载系统参数到map -->
+   <bean class="com.babel.basedata.util.SysconfigsLoadListener"/>
+   
+   <bean class="com.babel.common.core.service.impl.InjectBeanSelfProcessor"></bean>
+   <bean class="com.babel.basedata.util.Sysconfigs">
+   	<property name="sysconfigService" ref="sysconfigService"/>
+   </bean>
+   <bean id="springContextUtil" class="com.babel.common.core.util.SpringContextUtil"/>  
+   
+	<context:annotation-config />
+	
+	<!-- proxy-target-class默认"false",更改为"ture"使用CGLib动态代理 -->
+	<bean id="logServiceAspect" class="com.babel.basedata.logger.LogServiceAspect"></bean>
+	<bean id="logAspect" class="com.babel.common.web.loader.LogAuditAspect"></bean>
+	<aop:aspectj-autoproxy proxy-target-class="true" >  
+	     <aop:include name="logAspect" />
+	     <aop:include name="logServiceAspect" />  
+	 </aop:aspectj-autoproxy>  
+	
+	
+	<import resource="spring-mybatis.xml" />
+	<import resource="spring-cache-redis.xml" />
+	<import resource="spring-mongo.xml" />
+	
+	
+	<beans profile="develop">  
+	    <context:property-placeholder location="classpath:service-dev.properties"/>  
+	</beans>
+	<beans profile="production">  
+	    <context:property-placeholder location="file:/home/dubbo/master/service-product.properties"/>  
+	</beans>  
+	<beans profile="test">  
+	    <context:property-placeholder location="file:/home/btl/system/service-test.properties"/>  
+	</beans> 
+	
+</beans>

@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.babel.basedata.mapper.LogDbMapper" >
+  <resultMap id="BaseResultMap" type="com.babel.basedata.model.LogDbPO" >
+    <!--
+      WARNING - @mbggenerated
+    -->
+    <id column="cid" property="cid" jdbcType="DECIMAL" />
+    <result column="project_id" property="projectId" jdbcType="DECIMAL" />
+    <result column="service_id" property="serviceId" jdbcType="DECIMAL" />
+    <result column="user_id" property="userId" jdbcType="DECIMAL" />
+    <result column="user_name" property="userName" jdbcType="VARCHAR" />
+    <result column="model_id" property="modelId" jdbcType="DECIMAL" />
+    <result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
+    <result column="log_level" property="logLevel" jdbcType="INTEGER" />
+    <result column="title" property="title" jdbcType="VARCHAR" />
+    <result column="json_param" property="jsonParam" jdbcType="VARCHAR" />
+    <result column="json_param_opt_id" property="jsonParamOptId" jdbcType="DECIMAL" />
+    <result column="json_ret" property="jsonRet" jdbcType="VARCHAR" />
+    <result column="json_ret_opt_id" property="jsonRetOptId" jdbcType="DECIMAL" />
+    <result column="flag" property="flag" jdbcType="VARCHAR" />
+    <result column="descs" property="descs" jdbcType="VARCHAR" />
+    <result column="calls" property="calls" jdbcType="VARCHAR" />
+    <result column="author" property="author" jdbcType="VARCHAR" />
+    <result column="oper_type" property="operType" jdbcType="VARCHAR" />
+    <result column="ip" property="ip" jdbcType="VARCHAR" />
+    <result column="run_time" property="runTime" jdbcType="INTEGER" />
+    <result column="thread_id" property="threadId" jdbcType="INTEGER" />
+    <result column="rows" property="rows" jdbcType="INTEGER" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    <!--
+      WARNING - @mbggenerated
+    -->
+    cid, project_id, service_id, user_id, user_name, model_id, create_date, log_level, 
+    title, json_param, json_param_opt_id, json_ret, json_ret_opt_id, flag, descs, run_time, 
+    rows,ip,author,calls,oper_type,thread_id,
+    remark
+  </sql>
+  
+  <!-- 统计每天接口调用总次数 -->
+  <select id="staticIntfCallCount" resultType="hashmap">
+  	select cdate, log_level as "logLevel", count(0) as "count"
+  		 from (
+	  		select cdate,log_level,concat(class_name,'.',func_code) intf_code
+	  		  from v_log_db
+	  		  <include refid="staticIntfCodeTopCount_Where_SQL" />
+  		  ) t
+  		  <if test="param.intfCode!=null"> 
+  			 where intf_code=#{param.intfCode}     
+  		  </if>
+  		  group by cdate, log_level
+  </select>
+  
+  <sql id="staticIntfCodeTopCount_Where_SQL">
+  		where   create_date>=#{startDate}
+	  		  <if test="endDate!=null">
+	  		  	<![CDATA[ and create_date<=#{endDate} ]]>
+	  		  </if>
+	  		  <if test="param.runTime !=null"> 
+	  			 and run_time>=#{param.runTime}     
+	  		  </if>
+	  		  <if test="param.logLevel !=null"> 
+	  			 and log_level=#{param.logLevel}     
+	  		  </if>
+	  		  <if test="param.rows!=null"> 
+	  			 and rows>=#{param.rows}     
+	  		  </if>
+	  		  <if test="param.userName!=null"> 
+	  			 and user_name=#{param.userName}     
+	  		  </if>
+	  		  <if test="param.ip!=null"> 
+	  			 and ip=#{param.ip}     
+	  		  </if>
+	  		  <if test="param.packageName!=null"> 
+	  			 and package_name=#{param.packageName}     
+	  		  </if>
+	  		  <if test="param.className!=null"> 
+	  			 and class_name=#{param.className}     
+	  		  </if>
+	  		  <if test="param.methodName!=null"> 
+	  			 and func_code=#{param.methodName}     
+	  		  </if>
+  </sql>
+  <!-- 调用次数前N个的每天调用次数变化 -->
+  <select id="staticIntfCodeTopCount" resultType="hashmap">
+  	select cdate,  intf_code as "intfCode", count(0) as "count"
+  		 from (
+	  		select cdate,log_level,concat(class_name,'.',func_code) intf_code
+	  		  from v_log_db
+	  		   <include refid="staticIntfCodeTopCount_Where_SQL" />
+  		  ) t
+  		  	<!-- 取时段内接口调用次数最多的前N个接口 -->
+  			 where intf_code in (
+  			 	select intf_code from (select  intf_code
+		  		 from (
+			  		select concat(class_name,'.',func_code) intf_code, count(*) cout
+			  		  from v_log_db
+			  		 	<include refid="staticIntfCodeTopCount_Where_SQL" />
+			  		    group by intf_code
+		  		  ) tt
+  		 		 order by cout desc limit #{topN}) as t
+  		  )
+  		  group by cdate, intf_code
+  </select>
+  
+  <select id="staticUuidMaxDepth" resultType="hashmap">
+  	select uuid, max(run_time) as runTime, max(concat(class_name,'.',func_code)) oneIntfCode
+  			, group_concat(concat(class_name,'.',func_code) separator ',') allIntfCode
+  			, max(create_date) as maxDate, count(*) as count
+  		 from v_log_db
+  		<include refid="staticIntfCodeTopCount_Where_SQL" />
+  		and uuid is not null
+  	 group by uuid order by count desc, runTime desc limit  #{topN};
+  </select>
+  <select id="staticIntfCodeMaxRunTime" resultType="hashmap">
+  	select concat(class_name,'.',func_code) as intfCode, ROUND(sum(run_time)/count(0)) as avgTime
+  		, max(title) as title, max(calls) as calls,max(author) as author,max(descs) as descs
+  		, max(create_date) as maxDate, max(run_time) as maxRunTime, count(0) as count
+  	 from v_log_db
+  		<include refid="staticIntfCodeTopCount_Where_SQL" />
+  	 group by intfCode order by avgTime desc limit #{topN};
+  </select>
+  
+  <select id="stataicIntfCodeShowAll"  resultType="hashmap">
+  	select package_Name as packageName, concat(class_name,'.',func_code) as intfCode, count(*) as count
+  		, count(distinct(user_name)) as userCount,count(distinct(ip)) as ipCount, max(create_date) as maxDate
+  		, max(title) as title, max(calls) as calls,max(author) as author,max(descs) as descs
+  		, max(run_time) as maxRunTime, max(rows) as maxRows
+  		, max(case when log_level=4 then create_date else null end) maxErrorDate
+  		, sum(case when log_level=4 then 1 else 0 end) errorCount
+  	from v_log_db
+  		<include refid="staticIntfCodeTopCount_Where_SQL" />
+	group by packageName, intfCode
+	order by packageName, count desc
+  </select>
+</mapper>

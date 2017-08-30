@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" 
+	xmlns:aop="http://www.springframework.org/schema/aop" 
+	xmlns:context="http://www.springframework.org/schema/context" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xsi:schemaLocation="http://www.springframework.org/schema/aop   
+        http://www.springframework.org/schema/aop/spring-aop-4.0.xsd   
+        http://www.springframework.org/schema/beans   
+        http://www.springframework.org/schema/beans/spring-beans-4.0.xsd   
+        http://www.springframework.org/schema/context   
+        http://www.springframework.org/schema/context/spring-context-4.0.xsd"
+	default-autowire="byName" default-lazy-init="false">
+
+	<!-- 采用注释的方式配置bean -->
+	<context:annotation-config />
+	
+	<!-- 配置要扫描的包 -->
+	<context:component-scan base-package="com.babel.basedata
+		,com.babel.common.web.loader" />
+	<bean id="SpringContextUtil" class="com.babel.common.core.util.SpringContextUtil"/> 
+	
+	<!-- 这个类，容器启动时加载，以便于加载系统参数到map
+		key=className value=methodName
+	 -->
+   <bean class="com.babel.basedata.util.SysconfigsLoadListener">
+   		<property name="invokeMethods">
+			<props>
+				<prop key="tableDefineRedisService">loadTable,loadTableDefine</prop>
+			</props>
+   		</property>
+   </bean>
+   
+   <!-- contextTaskBeanName可配置通过ContextListener开机启动-->
+   <bean id="configWebUtil" class="com.babel.common.web.constants.ConfigWebUtil">
+		<property name="config">
+  	  		<props>
+				<prop key="sysIfTest">true</prop><!-- 是否测试模式 -->
+				<prop key="contextTaskBeanName">lookupJsResetTaskLoader,retryRuleLoader,whiteListLoader,modelCacheLoader,moduleTaskLoader</prop>
+			</props>
+		</property>
+	</bean> 
+   
+
+	<!-- 系统配置参数
+		sql.ignoreKey,sql.logSqlIgnore,sql.ignoreSqlId这三个参数的配置与spring-mybatis.xml中的配置效果一样，那个先起作用，这个再起作用。一般情况下任配一个就行了，效果一样。
+	 -->
+	<bean id="sysconfigs" class="com.babel.basedata.util.Sysconfigs">
+		<property name="sysType" value="lawHelp,btl"></property>
+	   	<property name="appType" value="app"></property>
+		<property name="properties">
+			<props>  
+                <prop key="sql.logSqlIgnore">select_seq,select_count</prop> 
+                <prop key="sql.ignoreKey">
+                	FROM tf_sysconfig WHERE ( IF_dEL = 0 and STATUS = 1 )
+                </prop>
+                <prop key="sql.ignoreSqlId"><!-- 忽略sql日志处理 -->
+                	ModelMapper:selectByExample
+                	LogDbMapper:insert
+                </prop>
+                <prop key="sql.ignoreSqlIdOnLoad"><!-- 忽略sql日志仅在启动时，前60秒 -->
+                	ModuleMapper.selectByExample
+                	SysconfigMapper.selectByExample
+                	ThreadPoolMapper.selectCountByExample
+                	ThreadPoolMapper.selectByExample
+                </prop>
+                <prop key="sql.logInfo">0</prop>
+                <prop key="sql.logWarn">2000</prop>
+                <prop key="service.logInfo">0</prop>
+                <prop key="service.logWarn">2000</prop>
+                <prop key="service.ignoreIntfKey">
+                	LogDbService:log,info
+                </prop>
+                <prop key="sys.login.domain">false</prop>
+            </props>
+         </property>
+	</bean>
+	
+	
+	
+	<bean id ="taskExecutor"  class ="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor" > 
+	    <property name ="corePoolSize" value ="5" /> 
+	    <property name ="keepAliveSeconds" value ="300" /> 
+	    <property name ="maxPoolSize" value ="20" /> 
+	    <property name ="queueCapacity" value ="1000" /> 
+	  </bean> 
+	  
+	
+
+	<!-- proxy-target-class默认"false",更改为"ture"使用CGLib动态代理 -->
+	<aop:aspectj-autoproxy proxy-target-class="true" />	
+	
+	<import resource="spring-mail.xml" />
+	 
+	<import resource="spring-mybatis.xml" />
+	<import resource="spring-mongo.xml" />
+	<import resource="spring-security.xml" />
+	
+		<!-- ehcache 
+    <import resource="spring-cache-ehcache.xml" />
+    <import resource="spring-cache-redis-cluster.xml" />
+    -->
+   	<import resource="spring-cache-redis.xml" />
+   
+   
+	
+	<beans profile="develop">
+		<!-- 将多个配置文件读取到容器中，交给Spring管理 -->  
+	    <bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">  
+	        <property name="locations">  
+	           <list>
+	           	  <value>classpath:service-dev.properties</value> 
+	            </list>  
+	        </property>  
+	    </bean>
+	    <bean id="customizedPropertyConfigurer"
+		    class="com.babel.common.core.util.CustomizedPropertyPlaceholderConfigurer">
+		    <property name="locations">
+		        <list>
+		            <value>classpath:service-dev.properties</value>
+		        </list>
+		    </property>
+		</bean>
+	</beans>
+	
+	
+</beans>

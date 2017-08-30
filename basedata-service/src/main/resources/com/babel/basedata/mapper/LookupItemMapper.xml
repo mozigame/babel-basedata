@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.babel.basedata.mapper.LookupItemMapper" >
+  <resultMap id="BaseResultMap" type="com.babel.basedata.model.LookupItemPO" >
+    <!--
+      WARNING - @mbggenerated
+    -->
+    <id column="cid" property="cid" jdbcType="DECIMAL" />
+    <result column="lookup_id" property="lookupId" jdbcType="DECIMAL" />
+    <result column="language" property="language" jdbcType="VARCHAR" />
+    <result column="code" property="code" jdbcType="VARCHAR" />
+    <result column="item_code" property="itemCode" jdbcType="VARCHAR" />
+    <result column="item_name" property="itemName" jdbcType="VARCHAR" />
+    <result column="item_value" property="itemValue" jdbcType="VARCHAR" />
+    <result column="order_count" property="orderCount" jdbcType="INTEGER" />
+    <result column="color" property="color" jdbcType="VARCHAR" />
+    <result column="attr_json" property="attrJson" jdbcType="VARCHAR" />
+    <result column="attr1" property="attr1" jdbcType="VARCHAR" />
+    <result column="attr2" property="attr2" jdbcType="VARCHAR" />
+    <result column="attr3" property="attr3" jdbcType="VARCHAR" />
+    <result column="attr4" property="attr4" jdbcType="VARCHAR" />
+    <result column="status" property="status" jdbcType="INTEGER" />
+    <result column="if_del" property="ifDel" jdbcType="INTEGER" />
+    <result column="create_user" property="createUser" jdbcType="DECIMAL" />
+    <result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
+    <result column="modify_user" property="modifyUser" jdbcType="DECIMAL" />
+    <result column="modify_date" property="modifyDate" jdbcType="TIMESTAMP" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    <!--
+      WARNING - @mbggenerated
+    -->
+    cid, lookup_id, language, item_code, item_name, item_value, order_count, color, attr_json, 
+    attr1, attr2, attr3, attr4, status, if_del, create_user, create_date, modify_user, 
+    modify_date, remark
+  </sql>
+  
+  <select id="findLookupItemListByCode"  resultMap="BaseResultMap">
+  	 select l_item.cid, l_item.lookup_id, l.code, l_item.language, l_item.item_code, l_item.item_name, l_item.item_value
+    		, l_item.order_count, l_item.color, l_item.attr_json, l_item.attr1, l_item.attr2, l_item.attr3, l_item.attr4
+    	from tf_lookup_item l_item, tf_lookup l 
+    	where l_item.lookup_id=l.cid and l.if_del=0 and l_item.if_del=0  and l.status=1 and l_item.status=1
+    		and l_item.language=#{language}
+    		and l.code in 
+	    		<foreach collection="lookupCodeList" index="index" item="item" open="(" separator="," close=")">
+					#{item}
+				</foreach>
+    	order by lookup_id, order_count
+  </select>
+</mapper>

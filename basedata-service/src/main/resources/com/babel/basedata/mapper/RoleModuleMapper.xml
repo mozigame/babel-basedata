@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.babel.basedata.mapper.RoleModuleMapper" >
+  <resultMap id="BaseResultMap" type="com.babel.basedata.model.RoleModulePO" >
+    <!--
+      WARNING - @mbggenerated
+    -->
+    <id column="cid" property="cid" jdbcType="DECIMAL" />
+    <result column="role_id" property="roleId" jdbcType="DECIMAL" />
+    <result column="module_id" property="moduleId" jdbcType="DECIMAL" />
+    <result column="status" property="status" jdbcType="INTEGER" />
+    <result column="if_del" property="ifDel" jdbcType="INTEGER" />
+    <result column="create_user" property="createUser" jdbcType="DECIMAL" />
+    <result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
+    <result column="modify_user" property="modifyUser" jdbcType="DECIMAL" />
+    <result column="modify_date" property="modifyDate" jdbcType="TIMESTAMP" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    <!--
+      WARNING - @mbggenerated
+    -->
+    cid, role_id, module_id, status, if_del, create_user, create_date, modify_user, modify_date, 
+    remark
+  </sql>
+  
+  <select id="getRoleModuleCountByParentId" resultType="hashmap">
+		SELECT
+			m.parent_id parentId, count(*) cout
+		FROM
+			tf_role_module rm,
+			tf_module m
+		WHERE
+			rm.module_id = m.cid
+		AND rm.role_id in
+		<foreach collection="roleIdList" index="index" item="item" open="(" separator="," close=")">
+				#{item,jdbcType=DECIMAL}
+			</foreach>
+		AND rm.if_del = 0
+		AND m.if_del = 0
+		AND m. STATUS = 1
+		and m.parent_id in 
+		<foreach collection="parentIdList" index="index" item="item" open="(" separator="," close=")">
+				#{item,jdbcType=DECIMAL}
+		</foreach>
+		group by m.parent_id
+  </select>
+</mapper>

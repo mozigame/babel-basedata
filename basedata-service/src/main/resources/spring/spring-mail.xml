@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<beans xmlns="http://www.springframework.org/schema/beans" 
+	xmlns:context="http://www.springframework.org/schema/context" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xsi:schemaLocation="http://www.springframework.org/schema/beans   
+        http://www.springframework.org/schema/beans/spring-beans-4.0.xsd   
+        http://www.springframework.org/schema/context   
+        http://www.springframework.org/schema/context/spring-context-4.0.xsd">  
+    <!-- 注意:这里的参数(如用户名、密码)都是针对邮件发送者的-->  
+    <bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">  
+        <property name="host">  
+            <value>smtp.126.com</value>  
+        </property>  
+        <property name="javaMailProperties">  
+            <props>
+            	<prop key="mail.debug">false</prop>
+                <prop key="mail.smtp.auth">true</prop>  
+                <prop key="mail.smtp.timeout">25000</prop>  
+                <prop key="mail.transport.protocol">smtp</prop>
+            </props>  
+        </property>  
+        <property name="username">  
+            <value>ycstest@126.com</value>  
+        </property>  
+        <property name="password">  
+            <value>te1styc1a23</value>  
+        </property>  
+    </bean>
+    
+    <!-- 注:这个TLS需要证书，具体见:http://jingyan.baidu.com/article/7082dc1c75167be40a89bdb8.html的说明 -->
+    <bean id="mailSenderYc" class="org.springframework.mail.javamail.JavaMailSenderImpl">
+        <property name="protocol" value="smtp" />
+        <property name="host" value="smtp.partner.outlook.cn" />
+        <property name="port" value="587" />
+        <property name="username" value="jinhe.chen@yc.ai" />
+        <property name="password" value="y234" />
+        <property name="javaMailProperties">
+            <props>
+                <prop key="mail.smtp.auth">true</prop>
+                <prop key="mail.smtp.starttls.enable">true</prop>
+            </props>
+        </property>
+    </bean>  
+</beans>  

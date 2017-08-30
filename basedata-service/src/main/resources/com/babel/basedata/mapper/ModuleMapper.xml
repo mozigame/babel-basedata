@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.babel.basedata.mapper.ModuleMapper" >
+  <resultMap id="BaseResultMap" type="com.babel.basedata.model.ModulePO" >
+    <!--
+      WARNING - @mbggenerated
+    -->
+    <id column="cid" property="cid" jdbcType="DECIMAL" />
+    <result column="parent_id" property="parentId" jdbcType="DECIMAL" />
+    <result column="app_type" property="appType" jdbcType="INTEGER" />
+    <result column="code" property="code" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="url" property="url" jdbcType="VARCHAR" />
+    <result column="mtype" property="mtype" jdbcType="INTEGER" />
+    <result column="show_type" property="showType" jdbcType="INTEGER" />
+    <result column="icon" property="icon" jdbcType="VARCHAR" />
+    <result column="css" property="css" jdbcType="VARCHAR" />
+    <result column="color" property="color" jdbcType="VARCHAR" />
+    <result column="order_count" property="orderCount" jdbcType="INTEGER" />
+    <result column="json_value" property="jsonValue" jdbcType="VARCHAR" />
+    <result column="status" property="status" jdbcType="INTEGER" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+    <result column="if_del" property="ifDel" jdbcType="INTEGER" />
+    <result column="create_user" property="createUser" jdbcType="DECIMAL" />
+    <result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
+    <result column="modify_user" property="modifyUser" jdbcType="DECIMAL" />
+    <result column="modify_date" property="modifyDate" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    <!--
+      WARNING - @mbggenerated
+    -->
+    cid, parent_id, app_type, code, name, url, mtype, show_type, icon, css, color, order_count, 
+    json_value, status, remark, if_del, create_user, create_date, modify_user, modify_date
+  </sql>
+  
+   <select id="getModuleCountByParentId" resultType="hashmap">
+		SELECT
+			m.parent_id parentId, count(*) cout
+		FROM
+			tf_module m
+		WHERE
+			m.if_del = 0
+		and m.parent_id in 
+		<foreach collection="parentIdList" index="index" item="item" open="(" separator="," close=")">
+				#{item,jdbcType=DECIMAL}
+		</foreach>
+		group by m.parent_id
+  </select>
+  
+  <insert id="insertModule">
+  	<selectKey resultType="java.lang.Long" order="BEFORE" keyProperty="cid">
+		select _nextval('_tf_module_cid_seq')
+	</selectKey>
+	
+	 insert into tf_module
+	(cid
+		,parent_id
+		,app_type
+		,code
+		,name
+		,url
+		,mtype
+		,show_type
+		,icon
+		,css
+		,color
+		,order_count
+		,json_value
+		,status
+		,remark
+		,if_del
+		,create_user
+		,create_date
+		,modify_user
+		,modify_date
+		)
+	 values 
+		(#{cid,jdbcType=DECIMAL}
+			,#{parentId,jdbcType=DECIMAL}
+			,#{appType,jdbcType=DECIMAL}
+			,#{code,jdbcType=VARCHAR}
+			,#{name,jdbcType=VARCHAR}
+			,#{url,jdbcType=VARCHAR}
+			,#{mtype,jdbcType=DECIMAL}
+			,#{showType,jdbcType=DECIMAL}
+			,#{icon,jdbcType=VARCHAR}
+			,#{css,jdbcType=VARCHAR}
+			,#{color,jdbcType=VARCHAR}
+			,#{orderCount,jdbcType=DECIMAL}
+			,#{jsonValue,jdbcType=VARCHAR}
+			,#{status,jdbcType=DECIMAL}
+			,#{remark,jdbcType=VARCHAR}
+			,#{ifDel,jdbcType=DECIMAL}
+			,#{createUser,jdbcType=DECIMAL}
+			,#{createDate,jdbcType=TIMESTAMP}
+			,#{modifyUser,jdbcType=DECIMAL}
+			,#{modifyDate,jdbcType=TIMESTAMP}
+			);
+  </insert>
+</mapper>

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.babel.basedata.mapper.ShortLinkMapper" >
+    <resultMap id="BaseResultMap" type="com.babel.basedata.model.ShortLinkPO" >
+    <!--
+      WARNING - @mbggenerated
+    -->
+		<id column="cid" property="cid" jdbcType="DECIMAL" />
+		<result column="short_type" property="shortType" jdbcType="INTEGER" />
+		<result column="info_type" property="infoType" jdbcType="NUMERIC" />
+		<result column="code" property="code" jdbcType="VARCHAR" />
+		<result column="data" property="data" jdbcType="VARCHAR" />
+		<result column="if_del" property="ifDel" jdbcType="INTEGER" />
+		<result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
+		<result column="remark" property="remark" jdbcType="VARCHAR" />
+	</resultMap>
+  <sql id="Base_Column_List" >
+    <!--
+      WARNING - @mbggenerated
+    -->
+    cid, short_type, info_type, code, data, if_del, create_date, remark
+  </sql>
+  
+  <sql id="findShortLinkListByPage_Where_Clause" >
+  		where if_del=0
+		<if test="param.shortType!=null">
+  			and (short_type like CONCAT('%',#{param.shortType},'%') and shortType like CONCAT('%',#{param.shortType},'%'))
+  		</if>
+		<if test="param.infoType!=null">
+  			and (info_type like CONCAT('%',#{param.infoType},'%') and infoType like CONCAT('%',#{param.infoType},'%'))
+  		</if>
+		<if test="param.code!=null">
+  			and (code like CONCAT('%',#{param.code},'%') and code like CONCAT('%',#{param.code},'%'))
+  		</if>
+		<if test="param.ifDel!=null">
+  			and (if_del like CONCAT('%',#{param.ifDel},'%') and ifDel like CONCAT('%',#{param.ifDel},'%'))
+  		</if>
+  		
+  		<!--
+  		<if test="param.name!=null">
+  			and (name_cn like CONCAT('%',#{param.nameCn},'%') and name_en like CONCAT('%',#{param.nameCn},'%'))
+  			and (name like #{param.name} or name like #{param.name})
+  		</if>
+  		-->
+  </sql>
+  
+  <select id="findShortLinkListByPage"  resultMap="BaseResultMap">
+  	 select 
+    <include refid="Base_Column_List" />
+    from tf_short_link
+    <include refid="findShortLinkListByPage_Where_Clause" />
+     limit #{page.pageBegin} , #{page.pageSize}
+    
+  </select>
+  
+  <select id="findShortLinkListByPageCount" resultType="int" >
+  	select count(*) from tf_short_link
+  	 <include refid="findShortLinkListByPage_Where_Clause" />
+  </select>
+</mapper>

@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.babel.basedata.mapper.SysconfigMapper" >
+  <resultMap id="BaseResultMap" type="com.babel.basedata.model.SysconfigPO" >
+    <!--
+      WARNING - @mbggenerated
+    -->
+    <id column="cid" property="cid" jdbcType="DECIMAL" />
+    <result column="conf_type" property="confType" jdbcType="INTEGER" />
+    <result column="pid" property="pid" jdbcType="DECIMAL" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="code" property="code" jdbcType="VARCHAR" />
+    <result column="value" property="value" jdbcType="VARCHAR" />
+    <result column="value_default" property="valueDefault" jdbcType="VARCHAR" />
+    <result column="value_json" property="valueJson" jdbcType="VARCHAR" />
+    <result column="value1" property="value1" jdbcType="VARCHAR" />
+    <result column="value2" property="value2" jdbcType="VARCHAR" />
+    <result column="status" property="status" jdbcType="DECIMAL" />
+    <result column="if_del" property="ifDel" jdbcType="INTEGER" />
+    <result column="order_count" property="orderCount" jdbcType="INTEGER" />
+    <result column="can_modify" property="canModify" jdbcType="INTEGER" />
+    <result column="if_env" property="ifEnv" jdbcType="INTEGER" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+    <result column="create_user" property="createUser" jdbcType="DECIMAL" />
+    <result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
+    <result column="modify_user" property="modifyUser" jdbcType="DECIMAL" />
+    <result column="modify_date" property="modifyDate" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    <!--
+      WARNING - @mbggenerated
+    -->
+    cid, conf_type, pid, name, code, value, value_default, value_json, value1, value2, 
+    status, if_del, remark, can_modify, order_count, create_user, create_date, modify_user, modify_date
+  </sql>
+  
+  <select id="findSysconfigAll" resultMap="BaseResultMap">
+  		select code, name, cid, pid, value, value_default, value_json,value1, value2
+  			,conf_type, if_env,modify_date
+  		from tf_sysconfig
+  		where if_del=0 and status=1
+  		<if test="confType!=null"> 
+  			and (conf_type is null or conf_type=#{confType,jdbcType=DECIMAL})
+  		</if>
+  		<if test="parentCode!=null">
+  			and  pid in 
+	  		(select cid from tf_sysconfig where if_del=0 and status=1 and code=#{parentCode,jdbcType=VARCHAR})
+  		</if>
+  	order by pid, order_count
+  </select>
+  
+  <sql id="findSysconfigByParentIds_Where_Clause">
+  		WHERE
+			if_del = 0
+  		<if test="confType!=null"> 
+  			and (conf_type is null or conf_type=#{confType,jdbcType=DECIMAL})
+  		</if>
+		and pid in 
+		<foreach collection="pidList" index="index" item="item" open="(" separator="," close=")">
+				#{item,jdbcType=DECIMAL}
+		</foreach>
+  </sql>
+  
+  <select id="findSysconfigByParentIdsCount" resultType="hashmap">
+		SELECT
+			pid parentId, count(*) cout
+		FROM
+			tf_sysconfig 
+		<include refid="findSysconfigByParentIds_Where_Clause" />
+		group by pid
+  </select>
+  
+  <select id="findSysconfigByParentIds" resultMap="BaseResultMap">
+  	select <include refid="Base_Column_List" />
+  	from 
+  		tf_sysconfig
+  	<include refid="findSysconfigByParentIds_Where_Clause" />
+  	order by pid, order_count
+  </select>
+  
+  <insert id="insertSysconfig">
+  	<selectKey resultType="java.lang.Long" order="BEFORE" keyProperty="cid">
+		select _nextval('_tf_sysconfig_cid_seq')
+	</selectKey>
+  	insert into tf_sysconfig
+	(cid
+		,conf_type
+		,pid
+		,name
+		,code
+		,value
+		,value_default
+		,value_json
+		,value1
+		,value2
+		,status
+		,if_del
+		,remark
+		,create_user
+		,create_date
+		,modify_user
+		,modify_date
+		,order_count
+		,can_modify
+		)
+	 values 
+	(#{cid,jdbcType=DECIMAL}
+		,#{confType,jdbcType=DECIMAL}
+		,#{pid,jdbcType=DECIMAL}
+		,#{name,jdbcType=VARCHAR}
+		,#{code,jdbcType=VARCHAR}
+		,#{value,jdbcType=VARCHAR}
+		,#{valueDefault,jdbcType=VARCHAR}
+		,#{valueJson,jdbcType=VARCHAR}
+		,#{value1,jdbcType=VARCHAR}
+		,#{value2,jdbcType=VARCHAR}
+		,#{status,jdbcType=DECIMAL}
+		,#{ifDel,jdbcType=DECIMAL}
+		,#{remark,jdbcType=VARCHAR}
+		,#{createUser,jdbcType=DECIMAL}
+		,#{createDate,jdbcType=TIMESTAMP}
+		,#{modifyUser,jdbcType=DECIMAL}
+		,#{modifyDate,jdbcType=TIMESTAMP}
+		,#{orderCount,jdbcType=DECIMAL}
+		,#{canModify,jdbcType=DECIMAL}
+		);
+  </insert>
+</mapper>

@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" 
+	xmlns:context="http://www.springframework.org/schema/context" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xsi:schemaLocation="http://www.springframework.org/schema/beans   
+        http://www.springframework.org/schema/beans/spring-beans-4.0.xsd   
+        http://www.springframework.org/schema/context   
+        http://www.springframework.org/schema/context/spring-context-4.0.xsd"> 
+        
+	<!-- ================ Shiro start ================ -->
+		<bean id="securityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">
+			<property name="sessionManager" ref="sessionManager" />
+			<property name="realm" ref="ShiroRealm" />
+		</bean>
+	
+	<bean id="redisCacheManagerYc" class="com.babel.common.core.redis.RedisCacheManager"><!-- 自定义cacheManager -->
+        <property name="redisManager" ref="redisManager" />
+    </bean>
+    <bean id="redisCache" class="com.babel.common.core.redis.RedisCache"><!-- 自定义cacheManager -->
+        <constructor-arg ref="redisManager"></constructor-arg>
+    </bean> 
+    
+    <!-- -->
+    <bean id="sessionManager"  class="org.apache.shiro.web.session.mgt.DefaultWebSessionManager">
+    	<property name="sessionDAO" ref="redisShiroSessionDAO" />
+       	<property name="cacheManager" ref="redisCacheManagerYc" />
+        <property name="globalSessionTimeout" value="3600000" />
+        <!-- -->
+        <property name="deleteInvalidSessions" value="true"/>
+        <property name="sessionValidationSchedulerEnabled" value="true"/>
+        
+      	<property name="sessionValidationScheduler" ref="sessionValidationScheduler"/> 
+        <property name="sessionIdCookieEnabled" value="true"/>
+        <property name="sessionValidationInterval" value="180000" />
+         	
+    </bean>
+    
+    <!-- session by redis 
+ 	<bean id="sessionManager"  class="org.apache.shiro.web.session.mgt.DefaultWebSessionManager">
+        <property name="sessionDAO" ref="redisShiroSessionDAO" />
+       	<property name="cacheManager" ref="redisCacheManagerYc" />
+        <property name="globalSessionTimeout" value="3600000" />
+        <property name="deleteInvalidSessions" value="true"/>
+        <property name="sessionValidationSchedulerEnabled" value="true"/>
+        <property name="sessionValidationScheduler" ref="sessionValidationScheduler"/> 
+        <property name="sessionIdCookieEnabled" value="true"/>
+        <property name="sessionValidationInterval" value="3000000" />
+    </bean>
+     --> 
+    <!-- 会话验证调度器 
+	<bean id="sessionValidationScheduler" class="org.apache.shiro.session.mgt.quartz.QuartzSessionValidationScheduler">
+	    <property name="sessionValidationInterval" value="180000"/>
+	    <property name="sessionManager" ref="sessionManager"/>
+	</bean>
+	-->
+	<!-- interval定时半小时检验一次有所session是否有效（毫秒单位）-->
+	<bean id="sessionValidationScheduler" class="org.apache.shiro.session.mgt.ExecutorServiceSessionValidationScheduler">
+    	<constructor-arg name="sessionManager" ref="sessionManager"/>
+    	<property name="interval" value="180000"/>  
+	</bean>
+
+	
+
+    <bean id="redisShiroSessionDAO" class="com.babel.common.core.redis.RedisSessionDAO">
+        <property name="redisManager" ref="redisManager" />
+    </bean>
+    <bean id="redisManager" class="com.babel.common.core.redis.RedisManager"></bean>
+    
+	<!-- 項目自定义的Realm -->
+    <bean id="ShiroRealm" class="com.babel.common.core.interceptor.shiro.ShiroRealm" ></bean>
+    
+	<!-- Shiro Filter -->
+	<bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
+		<property name="securityManager" ref="securityManager" />
+		<property name="loginUrl" value="/" />
+		<property name="successUrl" value="/main/index" />
+		<property name="unauthorizedUrl" value="/login_toLogin" />
+		<property name="filterChainDefinitions">
+			<value>
+			/static/login/** 			= anon
+			/static/js/myjs/** 			= authc
+			/static/js/** 				= anon
+			/uploadFiles/uploadImgs/** 	= anon
+           	/code.do 					= anon
+           	/login_login	 			= anon
+           	/forget			 			= anon
+           	/app**/** 					= anon
+           	/weixin/** 					= anon
+           	/dashboard/**               = anon
+           	/favicon.ico				= anon
+           	/**							= authc
+			</value>
+		</property>
+	</bean>
+	<!-- ================ Shiro end ================ -->
+	
+</beans>

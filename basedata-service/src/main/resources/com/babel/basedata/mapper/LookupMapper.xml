@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.babel.basedata.mapper.LookupMapper" >
+  <resultMap id="BaseResultMap" type="com.babel.basedata.model.LookupPO" >
+    <!--
+      WARNING - @mbggenerated
+    -->
+    <id column="cid" property="cid" jdbcType="DECIMAL" />
+    <result column="code" property="code" jdbcType="VARCHAR" />
+    <result column="name_cn" property="nameCn" jdbcType="VARCHAR" />
+    <result column="name_en" property="nameEn" jdbcType="VARCHAR" />
+    <result column="can_modify" property="canModify" jdbcType="INTEGER" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+    <result column="status" property="status" jdbcType="INTEGER" />
+    <result column="if_del" property="ifDel" jdbcType="INTEGER" />
+    <result column="create_user" property="createUser" jdbcType="DECIMAL" />
+    <result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
+    <result column="modify_user" property="modifyUser" jdbcType="DECIMAL" />
+    <result column="modify_date" property="modifyDate" jdbcType="TIMESTAMP" />
+  </resultMap>
+  
+  <resultMap id="ResultMap" type="hashmap" >
+    <!--
+      WARNING - @mbggenerated
+    -->
+    <id column="cid" property="cid" jdbcType="DECIMAL" />
+    <result column="code" property="code" jdbcType="VARCHAR" />
+    <result column="name_cn" property="nameCn" jdbcType="VARCHAR" />
+    <result column="name_en" property="nameEn" jdbcType="VARCHAR" />
+    <result column="can_modify" property="canModify" jdbcType="INTEGER" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+    <result column="status" property="status" jdbcType="INTEGER" />
+    <result column="if_del" property="ifDel" jdbcType="INTEGER" />
+    <result column="create_user" property="createUser" jdbcType="DECIMAL" />
+    <result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
+    <result column="modify_user" property="modifyUser" jdbcType="DECIMAL" />
+    <result column="modify_date" property="modifyDate" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    <!--
+      WARNING - @mbggenerated
+    -->
+    cid, code, name_cn, name_en, can_modify, remark, status, if_del, create_user, create_date, 
+    modify_user, modify_date
+  </sql>
+  
+  <sql id="findLookupListByPage_Where_Clause" >
+  		where if_del=0
+  		<if test="param.code!=null"> 
+  			and code=#{param.code}
+  		</if>
+  		
+  		<if test="param.nameCn!=null"> 
+  			<!--and (name_cn like '%'||#{param.nameCn}||'%' or name_en like '%'||#{param.nameCn}||'%')-->
+  			<!--
+  			and (name_cn like CONCAT('%',#{param.nameCn},'%') and name_en like CONCAT('%',#{param.nameCn},'%'))
+  			-->
+  			and (name_cn like #{param.nameCn} or name_en like #{param.nameCn})
+  		</if>
+  </sql>
+  
+  <select id="findLookupListByPage"  resultMap="BaseResultMap">
+  	 select 
+    <include refid="Base_Column_List" />
+    from tf_lookup
+    <include refid="findLookupListByPage_Where_Clause" />
+    <if test="page.sort!=null"> 
+		order by ${page.sort} ${page.order}    
+  	</if>
+     limit #{page.pageBegin} , #{page.pageSize}
+     
+  </select>
+  <select id="findLookupMapByPage"  resultMap="ResultMap">
+  	 select 
+    <include refid="Base_Column_List" />
+    from tf_lookup
+    <include refid="findLookupListByPage_Where_Clause" />
+     limit #{page.pageBegin} , #{page.pageSize}
+    
+  </select>
+  
+  <select id="findLookupListByPageCount" resultType="int" >
+  	select count(*) from tf_lookup
+  	 <include refid="findLookupListByPage_Where_Clause" />
+  </select>
+  
+  <select id="findLookupMapByPageCount" resultType="int" >
+  	select count(*) from tf_lookup
+  	 <include refid="findLookupListByPage_Where_Clause" />
+  </select>
+
+</mapper>

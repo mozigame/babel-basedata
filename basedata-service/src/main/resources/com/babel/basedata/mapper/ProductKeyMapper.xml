@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.babel.basedata.mapper.ProductKeyMapper" >
+    <resultMap id="BaseResultMap" type="com.babel.basedata.model.ProductKeyPO" >
+    <!--
+      WARNING - @mbggenerated
+    -->
+		<id column="cid" property="cid" jdbcType="DECIMAL" />
+		<result column="product_id" property="productId" jdbcType="DECIMAL" />
+		<result column="partner_id" property="partnerId" jdbcType="DECIMAL" />
+		<result column="secret_key" property="secretKey" jdbcType="VARCHAR" />
+		<result column="begin_date" property="beginDate" jdbcType="TIMESTAMP" />
+		<result column="end_date" property="endDate" jdbcType="TIMESTAMP" />
+		<result column="whitelist" property="whitelist" jdbcType="VARCHAR" />
+		<result column="intf_role_id" property="intfRoleId" jdbcType="DECIMAL" />
+		<result column="status" property="status" jdbcType="INTEGER" />
+		<result column="if_del" property="ifDel" jdbcType="INTEGER" />
+		<result column="create_user" property="createUser" jdbcType="DECIMAL" />
+		<result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
+		<result column="modify_user" property="modifyUser" jdbcType="DECIMAL" />
+		<result column="modify_date" property="modifyDate" jdbcType="TIMESTAMP" />
+		<result column="remark" property="remark" jdbcType="VARCHAR" />
+	</resultMap>
+  <sql id="Base_Column_List" >
+    <!--
+      WARNING - @mbggenerated
+    -->
+    cid, product_id, partner_id, secret_key, begin_date, end_date, whitelist, intf_role_id, status, if_del, create_user, create_date, modify_user, modify_date, remark
+  </sql>
+  
+  <sql id="findProductKeyListByPage_Where_Clause" >
+  		where if_del=0
+		<if test="param.productId!=null"> 
+  			and product_id=#{param.productId}
+  		</if>
+		<if test="param.partnerId!=null"> 
+  			and partner_id=#{param.partnerId}
+  		</if>
+		<if test="param.status!=null"> 
+  			and status=#{param.status}
+  		</if>
+  		
+  		<!--
+  		<if test="param.name!=null">
+  			and (name_cn like CONCAT('%',#{param.nameCn},'%') and name_en like CONCAT('%',#{param.nameCn},'%'))
+  			and (name like #{param.name} or name like #{param.name})
+  		</if>
+  		-->
+  </sql>
+  
+  <select id="findProductKeyListByPage"  resultMap="BaseResultMap">
+  	 select 
+    <include refid="Base_Column_List" />
+    from tf_product_key
+    <include refid="findProductKeyListByPage_Where_Clause" />
+     limit #{page.pageBegin} , #{page.pageSize}
+    
+  </select>
+  
+  <select id="findProductKeyListByPageCount" resultType="int" >
+  	select count(*) from tf_product_key
+  	 <include refid="findProductKeyListByPage_Where_Clause" />
+  </select>
+</mapper>

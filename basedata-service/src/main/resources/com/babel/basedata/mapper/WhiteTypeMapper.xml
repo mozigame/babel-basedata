@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.babel.basedata.mapper.WhiteTypeMapper" >
+    <resultMap id="BaseResultMap" type="com.babel.basedata.model.WhiteTypePO" >
+    <!--
+      WARNING - @mbggenerated
+    -->
+		<id column="cid" property="cid" jdbcType="DECIMAL" />
+		<result column="code" property="code" jdbcType="VARCHAR" />
+		<result column="name" property="name" jdbcType="VARCHAR" />
+		<result column="type" property="type" jdbcType="INTEGER" />
+		<result column="data_type" property="dataType" jdbcType="INTEGER" />
+		<result column="status" property="status" jdbcType="INTEGER" />
+		<result column="if_del" property="ifDel" jdbcType="INTEGER" />
+		<result column="remark" property="remark" jdbcType="VARCHAR" />
+		<result column="create_user" property="createUser" jdbcType="DECIMAL" />
+		<result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
+		<result column="modify_user" property="modifyUser" jdbcType="DECIMAL" />
+		<result column="modify_date" property="modifyDate" jdbcType="TIMESTAMP" />
+	</resultMap>
+  <sql id="Base_Column_List" >
+    <!--
+      WARNING - @mbggenerated
+    -->
+    cid, code, name, type, data_type, status, if_del, remark, create_user, create_date, modify_user, modify_date
+  </sql>
+  
+  <sql id="findWhiteTypeListByPage_Where_Clause" >
+  		where if_del=0
+		<if test="param.type!=null"> 
+  			and type=#{param.type}
+  		</if>
+  		
+  		<!--
+  		<if test="param.name!=null">
+  			and (name_cn like CONCAT('%',#{param.nameCn},'%') and name_en like CONCAT('%',#{param.nameCn},'%'))
+  			and (name like #{param.name} or name like #{param.name})
+  		</if>
+  		-->
+  </sql>
+  
+  <select id="findWhiteTypeListByPage"  resultMap="BaseResultMap">
+  	 select 
+    <include refid="Base_Column_List" />
+    from tf_white_type
+    <include refid="findWhiteTypeListByPage_Where_Clause" />
+     limit #{page.pageBegin} , #{page.pageSize}
+    
+  </select>
+  
+  <select id="findWhiteTypeListByPageCount" resultType="int" >
+  	select count(*) from tf_white_type
+  	 <include refid="findWhiteTypeListByPage_Where_Clause" />
+  </select>
+</mapper>

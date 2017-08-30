@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.babel.basedata.mapper.TemplateMapper" >
+    <resultMap id="BaseResultMap" type="com.babel.basedata.model.TemplatePO" >
+    <!--
+      WARNING - @mbggenerated
+    -->
+		<id column="cid" property="cid" jdbcType="DECIMAL" />
+		<result column="sys_type" property="sysType" jdbcType="VARCHAR" />
+		<result column="msg_type" property="msgType" jdbcType="INTEGER" />
+		<result column="code" property="code" jdbcType="VARCHAR" />
+		<result column="name" property="name" jdbcType="VARCHAR" />
+		<result column="tpl_code" property="tplCode" jdbcType="VARCHAR" />
+		<result column="tpl_data" property="tplData" jdbcType="VARCHAR" />
+		<result column="tpl_example" property="tplExample" jdbcType="VARCHAR" />
+		<result column="url" property="url" jdbcType="VARCHAR" />
+		<result column="status" property="status" jdbcType="INTEGER" />
+		<result column="if_del" property="ifDel" jdbcType="INTEGER" />
+		<result column="create_user" property="createUser" jdbcType="DECIMAL" />
+		<result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
+		<result column="modify_user" property="modifyUser" jdbcType="DECIMAL" />
+		<result column="modify_date" property="modifyDate" jdbcType="TIMESTAMP" />
+		<result column="remark" property="remark" jdbcType="VARCHAR" />
+	</resultMap>
+  <sql id="Base_Column_List" >
+    <!--
+      WARNING - @mbggenerated
+    -->
+    cid, sys_type, msg_type, code, name, tpl_code, tpl_data, tpl_example, url, status, if_del, create_user, create_date, modify_user, modify_date, remark
+  </sql>
+  
+  <sql id="findTemplateListByPage_Where_Clause" >
+  		where if_del=0
+		<if test="param.sysType!=null"> 
+  			and sys_type=#{param.sysType}
+  		</if>
+		<if test="param.msgType!=null"> 
+  			and msg_type=#{param.msgType}
+  		</if>
+		<if test="param.code!=null"> 
+  			and code=#{param.code}
+  		</if>
+		<if test="param.tplCode!=null"> 
+  			and tpl_code=#{param.tplCode}
+  		</if>
+		<if test="param.status!=null"> 
+  			and status=#{param.status}
+  		</if>
+  		
+  		<!--
+  		<if test="param.name!=null">
+  			and (name_cn like CONCAT('%',#{param.nameCn},'%') and name_en like CONCAT('%',#{param.nameCn},'%'))
+  			and (name like #{param.name} or name like #{param.name})
+  		</if>
+  		-->
+  </sql>
+  
+  <select id="findTemplateListByPage"  resultMap="BaseResultMap">
+  	 select 
+    <include refid="Base_Column_List" />
+    from tf_template
+    <include refid="findTemplateListByPage_Where_Clause" />
+     limit #{page.pageBegin} , #{page.pageSize}
+    
+  </select>
+  
+  <select id="findTemplateListByPageCount" resultType="int" >
+  	select count(*) from tf_template
+  	 <include refid="findTemplateListByPage_Where_Clause" />
+  </select>
+</mapper>

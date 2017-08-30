@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.babel.basedata.mapper.SysconfigUserMapper">
+  <resultMap id="BaseResultMap" type="com.babel.basedata.model.SysconfigUserPO">
+    <!--
+      WARNING - @mbggenerated
+    -->
+    <id column="cid" jdbcType="DECIMAL" property="cid" />
+    <result column="user_id" jdbcType="DECIMAL" property="userId" />
+    <result column="sysconfig_id" jdbcType="DECIMAL" property="sysconfigId" />
+    <result column="value" jdbcType="VARCHAR" property="value" />
+    <result column="value_json" jdbcType="VARCHAR" property="valueJson" />
+    <result column="value1" jdbcType="VARCHAR" property="value1" />
+    <result column="value2" jdbcType="VARCHAR" property="value2" />
+    <result column="if_del" jdbcType="INTEGER" property="ifDel" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="create_user" jdbcType="DECIMAL" property="createUser" />
+    <result column="create_date" jdbcType="TIMESTAMP" property="createDate" />
+    <result column="modify_user" jdbcType="DECIMAL" property="modifyUser" />
+    <result column="modify_date" jdbcType="TIMESTAMP" property="modifyDate" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--
+      WARNING - @mbggenerated
+    -->
+    cid, user_id, sysconfig_id, value, value_json, value1, value2, if_del, remark, create_user, 
+    create_date, modify_user, modify_date
+  </sql>
+  
+   <select id="findSysconfigUserListByCode"  resultMap="BaseResultMap">
+  	 select l_item.cid, l_item.sysconfig_id, l.code, l_item.language, l_item.item_code, l_item.item_name, l_item.item_value
+    		, l_item.order_count, l_item.color, l_item.attr_json, l_item.attr1, l_item.attr2, l_item.attr3, l_item.attr4
+    	from tf_sysconfig_user l_item, tf_sysconfig l 
+    	where l_item.sysconfig_id=l.cid and l.if_del=0 and l_item.if_del=0  and l.status=1 and l_item.status=1
+    		and l_item.user_id=#{userId}
+    		and l.code in 
+	    		<foreach collection="sysconfigCodeList" index="index" item="item" open="(" separator="," close=")">
+					#{item}
+				</foreach>
+    	order by sysconfig_id, order_count
+  </select>
+  
+</mapper>

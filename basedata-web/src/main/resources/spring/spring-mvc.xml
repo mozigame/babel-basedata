@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/aop   
+       http://www.springframework.org/schema/aop/spring-aop-4.0.xsd  
+       http://www.springframework.org/schema/mvc
+       http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd
+       http://www.springframework.org/schema/context
+       http://www.springframework.org/schema/context/spring-context-4.0.xsd">
+  <mvc:default-servlet-handler/>
+  
+ 	<!-- 统一异常输出处理，需要error.jsp,errorRet.jsp -->
+ 	<bean id="exceptionHandler" class="com.babel.common.web.loader.GlobalExceptionHandler"></bean>
+ 	<context:component-scan base-package="com.babel.**.controller" use-default-filters="false">  
+        <context:include-filter type="annotation" expression="org.springframework.stereotype.Controller"/>  
+    </context:component-scan> 
+  
+  <bean id="logServiceAspect" class="com.babel.basedata.logger.LogServiceAspect"></bean>
+ <bean id="logAspect" class="com.babel.common.web.loader.LogAuditAspect"></bean>
+ <bean id="controllerAspect" class="com.babel.common.web.loader.ControllerAspect"></bean>
+ <aop:aspectj-autoproxy proxy-target-class="true" >  
+     <aop:include name="controllerAspect" />
+     <aop:include name="logAspect" />
+     <aop:include name="logServiceAspect" />  
+ </aop:aspectj-autoproxy>  
+
+  <!--RequestMappingHandlerAdapter-->
+  <mvc:annotation-driven>
+    <mvc:message-converters>
+      <ref bean="stringHttpMessageConverter"/>
+      <ref bean="marshallingHttpMessageConverter"/>
+      <ref bean="mappingJackson2HttpMessageConverter"/>
+    </mvc:message-converters>
+  </mvc:annotation-driven>
+
+  <context:component-scan base-package="com.babel.basedata.controller,com.babel.common.web.loader"/>
+  
+  <bean id="baseLoadUtils" class="com.babel.basedata.util.BaseLoadUtils">
+  	<property name="userService" ref="userService"/>
+  </bean>
+
+  
+  <mvc:resources mapping="/static/**" location="/,/static/" />
+
+  <bean id="stringHttpMessageConverter"
+        class="org.springframework.http.converter.StringHttpMessageConverter"/>
+
+  <bean id="marshallingHttpMessageConverter"
+        class="org.springframework.http.converter.xml.MarshallingHttpMessageConverter">
+    <property name="marshaller" ref="castorMarshaller"/>
+    <property name="unmarshaller" ref="castorMarshaller"/>
+  </bean>
+
+  <bean id="mappingJackson2HttpMessageConverter"
+        class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+    <property name="supportedMediaTypes">
+      <list>
+        <value>application/json</value>
+        <value>application/xml</value>
+        <value>text/html</value>
+        <value>text/plain</value>
+        <value>text/xml</value>
+      </list>
+    </property>
+  </bean>
+  
+  	<bean id="allInterceptor" class="com.babel.common.web.interceptor.AllInterceptor"></bean>
+	<!-- 自定义拦截链配置 
+	<bean class="org.springframework.web.servlet.handler.BeanNameUrlHandlerMapping">  
+	    <property name="interceptors">  
+	        <list>  
+	           <ref bean="allInterceptor"/>  
+	        </list>  
+	    </property>  
+	</bean>
+	-->
+	<!-- 
+	<mvc:interceptors>
+		<mvc:interceptor>
+			<mvc:mapping path="/wxPay" />
+			<bean class="com.babel.common.web.interceptor.AllInterceptor"></bean>
+		</mvc:interceptor>
+	</mvc:interceptors>
+	-->
+
+  <bean id="castorMarshaller" class="org.springframework.oxm.castor.CastorMarshaller"/>
+  <!--信息转换 - 结束-->
+
+  <bean id="contentNegotiationManagerFactoryBean"
+        class="org.springframework.web.accept.ContentNegotiationManagerFactoryBean">
+    <property name="defaultContentType" value="text/html"/>
+    <property name="ignoreAcceptHeader" value="true"/>
+    <property name="favorPathExtension" value="true"/>
+    <property name="favorParameter" value="false"/>
+    <property name="mediaTypes">
+      <map>
+        <entry key="atom" value="application/atom+xml"/>
+        <entry key="html" value="text/html"/>
+        <entry key="json" value="application/json"/>
+      </map>
+    </property>
+  </bean>
+
+  <!--内容协商-->
+  <bean class="org.springframework.web.servlet.view.ContentNegotiatingViewResolver">
+    <property name="contentNegotiationManager">
+      <bean class="org.springframework.web.accept.ContentNegotiationManagerFactoryBean">
+        <property name="defaultContentType" value="text/html"/>
+        <property name="mediaTypes">
+          <map>
+            <entry key="json" value="application/json"/>
+            <entry key="xml" value="application/xml"/>
+            <entry key="html" value="text/html"/>
+          </map>
+        </property>
+      </bean>
+    </property>
+    <property name="viewResolvers">
+      <list>
+        <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+          <property name="prefix" value="/WEB-INF/jsp/"/>
+          <property name="suffix" value=".jsp"/>
+        </bean>
+      </list>
+    </property>
+    <property name="defaultViews">
+      <list>
+        <bean class="org.springframework.web.servlet.view.json.MappingJackson2JsonView"/>
+        <bean class="org.springframework.web.servlet.view.xml.MarshallingView">
+          <property name="marshaller" ref="castorMarshaller"/>
+        </bean>
+      </list>
+    </property>
+  </bean>
+
+  <!--国际化-->
+  <bean id="messageSource"
+        class="org.springframework.context.support.ResourceBundleMessageSource">
+    <property name="defaultEncoding" value="UTF-8"/>
+    <property name="basenames">
+      <list>
+        <value>messages.welcome</value>
+      </list>
+    </property>
+  </bean>
+
+  <!--文件上传-->
+  <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+    <property name="maxUploadSize" value="100000"/>
+  </bean>
+
+</beans>

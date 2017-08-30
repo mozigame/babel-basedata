@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.babel.basedata.mapper.ModelMapper" >
+  <resultMap id="BaseResultMap" type="com.babel.basedata.model.ModelPO" >
+    <!--
+      WARNING - @mbggenerated
+    -->
+    <id column="cid" property="cid" jdbcType="DECIMAL" />
+    <result column="func_code" property="funcCode" jdbcType="VARCHAR" />
+    <result column="class_name" property="className" jdbcType="VARCHAR" />
+    <result column="package_name" property="packageName" jdbcType="VARCHAR" />
+    <result column="if_del" property="ifDel" jdbcType="DECIMAL" />
+    <result column="order_count" property="orderCount" jdbcType="DECIMAL" />
+    <result column="params" property="params" jdbcType="VARCHAR" />
+    <result column="params" property="params" jdbcType="VARCHAR" />
+    <result column="title" property="params" jdbcType="VARCHAR" />
+    <result column="author" property="params" jdbcType="VARCHAR" />
+    <result column="calls" property="params" jdbcType="VARCHAR" />
+    <result column="descs" property="params" jdbcType="VARCHAR" />
+    <result column="intf_type" property="intfType" jdbcType="DECIMAL" />
+    <result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
+    <result column="modify_user" property="modifyUser" jdbcType="DECIMAL" />
+    <result column="modify_date" property="modifyDate" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    <!--
+      WARNING - @mbggenerated
+    -->
+    cid, func_code, class_name, package_name, create_date, modify_user, modify_date
+    	, if_del, params, order_count,open_type,title,author,calls,descs,intf_type
+  </sql>
+  
+  
+  
+  <insert id="insertModel">
+  	<selectKey resultType="java.lang.Long" order="BEFORE" keyProperty="cid">
+		select _nextval('_tf_model_cid_seq')
+	</selectKey>
+	 insert into tf_model
+	(cid
+		,func_code
+		,class_name
+		,package_name
+		,create_date
+		,params
+		,title
+		,author
+		,calls
+		,descs
+		,intf_type
+		,open_type
+		,if_del
+		,order_count
+		,modify_date
+		,modify_user
+		)
+	 values 
+	(#{cid,jdbcType=DECIMAL}
+		,#{funcCode,jdbcType=VARCHAR}
+		,#{className,jdbcType=VARCHAR}
+		,#{packageName,jdbcType=VARCHAR}
+		,#{createDate,jdbcType=TIMESTAMP}
+		,#{params,jdbcType=VARCHAR}
+		,#{title,jdbcType=VARCHAR}
+		,#{author,jdbcType=VARCHAR}
+		,#{calls,jdbcType=VARCHAR}
+		,#{descs,jdbcType=VARCHAR}
+		,#{intfType,jdbcType=DECIMAL}
+		,#{openType,jdbcType=DECIMAL}
+		,#{ifDel,jdbcType=DECIMAL}
+		,#{orderCount,jdbcType=DECIMAL}
+		,#{modifyDate,jdbcType=TIMESTAMP}
+		,#{modifyUser,jdbcType=DECIMAL}
+		);
+  </insert>
+</mapper>

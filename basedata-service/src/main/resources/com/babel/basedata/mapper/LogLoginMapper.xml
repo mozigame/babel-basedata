@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.babel.basedata.mapper.LogLoginMapper" >
+  <resultMap id="BaseResultMap" type="com.babel.basedata.model.LogLoginPO" >
+    <!--
+      WARNING - @mbggenerated
+    -->
+    <id column="cid" property="cid" jdbcType="DECIMAL" />
+    <result column="server_id" property="serverId" jdbcType="DECIMAL" />
+    <result column="user_id" property="userId" jdbcType="DECIMAL" />
+    <result column="user_name" property="userName" jdbcType="VARCHAR" />
+    <result column="roles" property="roles" jdbcType="VARCHAR" />
+    <result column="login_date" property="loginDate" jdbcType="TIMESTAMP" />
+    <result column="login_type" property="loginType" jdbcType="INTEGER" />
+    <result column="ip" property="ip" jdbcType="VARCHAR" />
+    <result column="pos_lat" property="posLat" jdbcType="REAL" />
+    <result column="pos_lon" property="posLon" jdbcType="REAL" />
+    <result column="address" property="address" jdbcType="VARCHAR" />
+    <result column="refer_info" property="referInfo" jdbcType="VARCHAR" />
+    <result column="other" property="other" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    <!--
+      WARNING - @mbggenerated
+    -->
+    cid, server_id, user_id, user_name, roles, login_date, login_type, ip, pos_lat, pos_lon, 
+    address, refer_info, other
+  </sql>
+</mapper>

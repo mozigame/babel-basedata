@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.babel.basedata.mapper.ProductCdkeyMapper" >
+    <resultMap id="BaseResultMap" type="com.babel.basedata.model.ProductCdkeyPO" >
+    <!--
+      WARNING - @mbggenerated
+    -->
+		<id column="cid" property="cid" jdbcType="DECIMAL" />
+		<result column="pp_code" property="ppCode" jdbcType="VARCHAR" />
+		<result column="order_no" property="orderNo" jdbcType="VARCHAR" />
+		<result column="data" property="data" jdbcType="VARCHAR" />
+		<result column="cdkey" property="cdkey" jdbcType="VARCHAR" />
+		<result column="cdkey_type" property="cdkeyType" jdbcType="INTEGER" />
+		<result column="due_date" property="dueDate" jdbcType="TIMESTAMP" />
+		<result column="use_date" property="useDate" jdbcType="TIMESTAMP" />
+		<result column="status" property="status" jdbcType="INTEGER" />
+		<result column="if_use" property="ifUse" jdbcType="INTEGER" />
+		<result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
+		<result column="modify_date" property="modifyDate" jdbcType="TIMESTAMP" />
+	</resultMap>
+  <sql id="Base_Column_List" >
+    <!--
+      WARNING - @mbggenerated
+    -->
+    cid, pp_code, order_no, data, cdkey, cdkey_type, due_date, use_date, status, if_use, create_date, modify_date
+  </sql>
+  
+  <sql id="findProductCdkeyListByPage_Where_Clause" >
+  		where if_del=0
+		<if test="param.ppCode!=null"> 
+  			and pp_code=#{param.ppCode}
+  		</if>
+		<if test="param.cdkey!=null"> 
+  			and cdkey=#{param.cdkey}
+  		</if>
+		<if test="param.status!=null"> 
+  			and status=#{param.status}
+  		</if>
+  		
+  		<!--
+  		<if test="param.name!=null">
+  			and (name_cn like CONCAT('%',#{param.nameCn},'%') and name_en like CONCAT('%',#{param.nameCn},'%'))
+  			and (name like #{param.name} or name like #{param.name})
+  		</if>
+  		-->
+  </sql>
+  
+  <select id="findProductCdkeyListByPage"  resultMap="BaseResultMap">
+  	 select 
+    <include refid="Base_Column_List" />
+    from tf_product_cdkey
+    <include refid="findProductCdkeyListByPage_Where_Clause" />
+     limit #{page.pageBegin} , #{page.pageSize}
+    
+  </select>
+  
+  <select id="findProductCdkeyListByPageCount" resultType="int" >
+  	select count(*) from tf_product_cdkey
+  	 <include refid="findProductCdkeyListByPage_Where_Clause" />
+  </select>
+</mapper>

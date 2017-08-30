@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.babel.basedata.mapper.RoleMapper" >
+    <resultMap id="BaseResultMap" type="com.babel.basedata.model.RolePO" >
+    <!--
+      WARNING - @mbggenerated
+    -->
+		<id column="cid" property="cid" jdbcType="DECIMAL" />
+		<result column="code" property="code" jdbcType="VARCHAR" />
+		<result column="name" property="name" jdbcType="VARCHAR" />
+		<result column="status" property="status" jdbcType="INTEGER" />
+		<result column="if_del" property="ifDel" jdbcType="INTEGER" />
+		<result column="create_user" property="createUser" jdbcType="DECIMAL" />
+		<result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
+		<result column="modify_user" property="modifyUser" jdbcType="DECIMAL" />
+		<result column="modify_date" property="modifyDate" jdbcType="TIMESTAMP" />
+		<result column="remark" property="remark" jdbcType="VARCHAR" />
+	</resultMap>
+  <sql id="Base_Column_List" >
+    <!--
+      WARNING - @mbggenerated
+    -->
+    cid, code, name, status, if_del, create_user, create_date, modify_user, modify_date, remark
+  </sql>
+  
+  <sql id="findRoleListByPage_Where_Clause" >
+  		where if_del=0
+		<if test="param.code!=null"> 
+  			and code=#{param.code}
+  		</if>
+		<if test="param.name!=null">
+  			and (name like CONCAT('%',#{param.name},'%') and name like CONCAT('%',#{param.name},'%'))
+  		</if>
+  		
+  		<!--
+  		<if test="param.name!=null">
+  			and (name_cn like CONCAT('%',#{param.nameCn},'%') and name_en like CONCAT('%',#{param.nameCn},'%'))
+  			and (name like #{param.name} or name like #{param.name})
+  		</if>
+  		-->
+  </sql>
+  
+  <select id="findRoleListByPage"  resultMap="BaseResultMap">
+  	 select 
+    <include refid="Base_Column_List" />
+    from tf_role
+    <include refid="findRoleListByPage_Where_Clause" />
+    <if test="page.sort!=null"> 
+		order by ${page.sort} ${page.order}    
+  	</if>
+  	
+     limit #{page.pageBegin} , #{page.pageSize}
+    
+    
+  </select>
+  
+  <select id="findRoleListByPageCount" resultType="int" >
+  	select count(*) from tf_role
+  	 <include refid="findRoleListByPage_Where_Clause" />
+  </select>
+</mapper>

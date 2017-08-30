@@ -1,0 +1,121 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+       <artifactId>basedata</artifactId>
+       <groupId>com.babel.basedata</groupId>
+       <version>0.0.1-SNAPSHOT</version>
+   </parent>
+
+	<artifactId>basedata-web</artifactId>
+	<packaging>war</packaging>
+
+	<name>basedata-web</name>
+	<url>http://maven.apache.org</url>
+	
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
+
+	<build>
+		<finalName>ROOT</finalName>
+
+		<resources>
+			<resource>
+				<targetPath>${project.build.directory}/classes</targetPath>
+				<directory>src/main/java</directory>
+				<filtering>true</filtering>
+				<includes>
+					<include>**/*.xml</include>
+					<include>**/*.properties</include>
+				</includes>
+			</resource>
+			<resource>
+				<targetPath>${project.build.directory}/classes</targetPath>
+				<directory>src/main/resources</directory>
+				<filtering>true</filtering>
+				<includes>
+					<include>**/*.xml</include>
+					<include>**/*.properties</include>
+				</includes>
+			</resource>
+		</resources>
+		<pluginManagement>
+			<plugins>
+				<plugin>  
+			        <groupId>org.apache.maven.plugins</groupId>  
+			        <artifactId>maven-compiler-plugin</artifactId>  
+			        <configuration>  
+			          <source>1.8</source>  
+			          <target>1.8</target>  
+			        </configuration>  
+			      </plugin> 
+			</plugins>
+		</pluginManagement>
+	</build>
+
+	<dependencies>
+		<dependency>
+			<groupId>com.babel.common</groupId>
+			<artifactId>common-core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.babel.common</groupId>
+			<artifactId>common-web</artifactId>
+			<version>${common-web.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.babel.common</groupId>
+			<artifactId>common-config</artifactId>
+			<version>${common-config.version}</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>com.babel.basedata</groupId>
+			<artifactId>basedata-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.babel.basedata</groupId>
+			<artifactId>basedata-service</artifactId>
+		</dependency>
+	
+		
+		<dependency>
+		  <groupId>org.apache.shiro</groupId>
+		  <artifactId>shiro-web</artifactId>
+		</dependency>
+		<dependency>
+		  <groupId>org.apache.shiro</groupId>
+		  <artifactId>shiro-spring</artifactId>
+		</dependency>
+		<dependency>
+		    <groupId>org.apache.shiro</groupId>
+		    <artifactId>shiro-quartz</artifactId>
+		</dependency>
+		
+		<!--spring-json依赖-->
+		<dependency>
+		    <groupId>com.google.code.gson</groupId>
+		    <artifactId>gson</artifactId>
+		</dependency>
+        <dependency>
+		  <groupId>com.fasterxml.jackson.core</groupId>
+		  <artifactId>jackson-core</artifactId>
+		</dependency>
+		<dependency>
+		  <groupId>com.fasterxml.jackson.core</groupId>
+		  <artifactId>jackson-databind</artifactId>
+		  <version>2.5.2</version>
+		</dependency>
+		<dependency>
+		  <groupId>com.fasterxml.jackson.core</groupId>
+		  <artifactId>jackson-annotations</artifactId>
+		</dependency>
+		<dependency>
+		  <groupId>org.codehaus.jackson</groupId>
+		  <artifactId>jackson-mapper-asl</artifactId>
+		</dependency>
+	</dependencies>
+
+</project>
+
