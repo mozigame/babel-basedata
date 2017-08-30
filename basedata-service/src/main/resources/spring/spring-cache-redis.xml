@@ -14,10 +14,10 @@
 	
 	<!-- redis缓存配置-->
     <bean id="redisPoolConfig" class="redis.clients.jedis.JedisPoolConfig"/>
-    <bean id="redisConnectionFactory" class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory">  
+    <bean id="redisConnectionFactory" class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory"> 
+    	<property name="hostName" value="${redis.host}" />   
         <property name="hostName" value="${redis.host}" />  
         <property name="port" value="${redis.port}" />
-        <property name="database" value="${redis.database}" />
         <!--  <property name="password" value="${redis.password}" />  
         <property name="timeout" value="${redis.timeout}" />  
         <property name="usePool" value="true" />  -->  

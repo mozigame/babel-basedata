@@ -18,8 +18,9 @@
         <property name="hostName" value="${redis.host}" />  
         <property name="port" value="${redis.port}" />
         <property name="database" value="${redis.database}" />
-        <property name="password" value="${redis.password}" />  
+          
         <!--
+        <property name="password" value="${redis.password}" />
         <property name="timeout" value="${redis.timeout}" />  
         <property name="usePool" value="true" />  -->  
         <property name="poolConfig" ref="redisPoolConfig" />  
