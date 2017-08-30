@@ -8,20 +8,6 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.apache.log4j.Logger;
-import com.babel.common.core.logger.ILogSqlManager;
-import com.babel.common.core.util.CommUtil;
-import com.babel.common.core.util.RedisListUtil;
-import com.babel.common.core.util.RedisUtil;
-import com.babel.common.core.util.ServerUtil;
-import com.babel.common.core.util.SpringContextUtil;
-import com.babel.common.core.util.TaskExecutorUtils;
-import com.babel.basedata.entity.LogInfoVO;
-import com.babel.basedata.model.LogDbPO;
-import com.babel.basedata.model.ModelPO;
-import com.babel.basedata.mongo.dao.ILogDbDao;
-import com.babel.basedata.service.ILogDbService;
-import com.babel.basedata.service.IModelService;
-import com.babel.basedata.util.Sysconfigs;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.core.task.TaskExecutor;
@@ -30,6 +16,19 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.babel.basedata.entity.LogInfoVO;
+import com.babel.basedata.model.LogDbPO;
+import com.babel.basedata.model.ModelPO;
+import com.babel.basedata.mongo.dao.ILogDbDao;
+import com.babel.basedata.service.ILogDbService;
+import com.babel.basedata.service.IModelService;
+import com.babel.basedata.util.Sysconfigs;
+import com.babel.common.core.logger.ILogSqlManager;
+import com.babel.common.core.util.CommUtil;
+import com.babel.common.core.util.RedisUtil;
+import com.babel.common.core.util.ServerUtil;
+import com.babel.common.core.util.SpringContextUtil;
+import com.babel.common.core.util.TaskExecutorUtils;
 import com.google.gson.Gson;
 
 @Service("logSqlManager")
@@ -351,11 +350,23 @@ public class LogSqlManagerService implements ILogSqlManager {
 				try {
 					//批量获取数据并删除
 					List<LogInfoVO> logList=null;
-					if(SpringContextUtil.containsBean("redisClusterConfiguration")){
-						logList=RedisListUtil.getListWithRemove(redisTemplate, redisKey, sizeGet);
+					Long size=redisTemplate.boundListOps(redisKey).size();
+//					if(SpringContextUtil.containsBean("redisClusterConfiguration")){
+//						logList=RedisListUtil.getListWithRemove(redisTemplate, redisKey, sizeGet);
+//					}
+//					else{
+//						logList=RedisListUtil.getListWithPop(redisTemplate, redisKey, sizeGet);
+//					}
+					if(size>sizeGet){
+						size=sizeGet+0l;
 					}
-					else{
-						logList=RedisListUtil.getListWithPop(redisTemplate, redisKey, sizeGet);
+					logList=new ArrayList<>();
+					LogInfoVO logInfoVO=null;
+					for(int i=0; i<size; i++){
+						logInfoVO=(LogInfoVO)redisTemplate.boundListOps(redisKey).leftPop();
+						if(logInfoVO!=null){
+							logList.add(logInfoVO);
+						}
 					}
 					
 					String sqlId="";
