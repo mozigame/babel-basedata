@@ -341,11 +341,23 @@ public class LogManagerImpl implements ILogManager {
 				int sizeGet=200;
 				try {
 					//批量获取数据并删除
-					if(SpringContextUtil.containsBean("redisClusterConfiguration")){
-						logList=RedisListUtil.getListWithRemove(redisTemplate, redisKey, sizeGet);
+//					if(SpringContextUtil.containsBean("redisClusterConfiguration")){
+//						logList=RedisListUtil.getListWithRemove(redisTemplate, redisKey, sizeGet);
+//					}
+//					else{
+//						logList=RedisListUtil.getListWithPop(redisTemplate, redisKey, sizeGet);
+//					}
+					Long size=redisTemplate.boundListOps(redisKey).size();
+					if(size>sizeGet){
+						size=sizeGet+0l;
 					}
-					else{
-						logList=RedisListUtil.getListWithPop(redisTemplate, redisKey, sizeGet);
+					logList=new ArrayList<>();
+					LogInfoVO logInfoVO=null;
+					for(int i=0; i<size; i++){
+						logInfoVO=(LogInfoVO)redisTemplate.boundListOps(redisKey).leftPop();
+						if(logInfoVO!=null){
+							logList.add(logInfoVO);
+						}
 					}
 					
 					String sqlId="";

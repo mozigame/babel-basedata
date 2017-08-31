@@ -1,5 +1,6 @@
 package com.babel.basedata.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
@@ -11,6 +12,7 @@ import org.springframework.util.StringUtils;
 
 import com.alibaba.druid.support.logging.Log;
 import com.alibaba.druid.support.logging.LogFactory;
+import com.babel.basedata.entity.LogInfoVO;
 import com.babel.basedata.mapper.LogLoginMapper;
 import com.babel.basedata.model.LogLoginPO;
 import com.babel.basedata.model.UserPO;
@@ -179,11 +181,24 @@ public class LogLoginService extends BaseService<LogLoginPO> implements ILogLogi
 		taskExecutor.execute(new Runnable() {
 			public void run() {
 				List<LogLoginPO> logLoginList=null;
-				if(SpringContextUtil.containsBean("redisClusterConfiguration")){
-					logLoginList=RedisListUtil.getListWithRemove(redisTemplate, redisKey, sizeGet);
+//				if(SpringContextUtil.containsBean("redisClusterConfiguration")){
+//					logLoginList=RedisListUtil.getListWithRemove(redisTemplate, redisKey, sizeGet);
+//				}
+//				else{
+//					logLoginList=RedisListUtil.getListWithPop(redisTemplate, redisKey, sizeGet);
+//				}
+				
+				Long size=redisTemplate.boundListOps(redisKey).size();
+				if(size>sizeGet){
+					size=sizeGet+0l;
 				}
-				else{
-					logLoginList=RedisListUtil.getListWithPop(redisTemplate, redisKey, sizeGet);
+				logLoginList=new ArrayList<>();
+				LogInfoVO logInfoVO=null;
+				for(int i=0; i<size; i++){
+					logInfoVO=(LogInfoVO)redisTemplate.boundListOps(redisKey).leftPop();
+					if(logInfoVO!=null){
+						logList.add(logInfoVO);
+					}
 				}
 				
 				if(logLoginList.size()>0){
