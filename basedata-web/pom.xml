@@ -79,7 +79,23 @@
 			<artifactId>basedata-service</artifactId>
 		</dependency>
 	
+		<dependency>
+			<groupId>commons-net</groupId>
+			<artifactId>commons-net</artifactId>
+			<version>3.2</version>
+		</dependency>
+
+		<dependency>
+			<groupId>commons-fileupload</groupId>
+			<artifactId>commons-fileupload</artifactId>
+			<version>1.3.1</version>
+		</dependency>
 		
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-jdbc</artifactId>
+		</dependency>
+			
 		<dependency>
 		  <groupId>org.apache.shiro</groupId>
 		  <artifactId>shiro-web</artifactId>

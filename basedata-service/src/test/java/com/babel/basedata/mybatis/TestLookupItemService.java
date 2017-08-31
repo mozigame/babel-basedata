@@ -13,9 +13,10 @@ import com.babel.basedata.model.LookupItemPO;
 import com.babel.basedata.service.ILookupItemService;
 import com.babel.common.core.data.RetResult;
 import com.babel.common.core.page.PageVO;
+import com.google.gson.Gson;
 
 import junit.framework.TestCase;
-import net.sf.json.JSONObject;
+
 
 
 
@@ -54,7 +55,7 @@ public class TestLookupItemService{
 		RetResult<LookupItemPO> ret = lookupItemService.findLookupItemById(2l);
 		System.out.println(ret.getFirstData());
 		
-		String json=JSONObject.fromObject(ret.getFirstData()).toString();
+		String json=new Gson().toJson(ret.getFirstData());
 		System.out.println(json);
 	}
 	

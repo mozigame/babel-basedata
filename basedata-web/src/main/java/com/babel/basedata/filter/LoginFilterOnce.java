@@ -220,7 +220,7 @@ public class LoginFilterOnce extends OncePerRequestFilter {
 			if(isCheckUrl){
 				RetResult<String> ret=retryRuleCheckService.checkLoginRetryCount(RetryRuleUtils.RETRY_FUNC_CODE_LOGINFILTER, userName, ip);
 				if(!ret.isSuccess()){
-					res.setCharacterEncoding("UTF-8");
+//					res.setCharacterEncoding("UTF-8");
 	                res.sendError(HttpStatus.DESTINATION_LOCKED.value(),  
 	                        ret.getMsgBody());
 	                return;
