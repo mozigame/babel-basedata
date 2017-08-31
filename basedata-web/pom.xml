@@ -78,6 +78,12 @@
 			<groupId>com.babel.basedata</groupId>
 			<artifactId>basedata-service</artifactId>
 		</dependency>
+		
+		<dependency>
+			<groupId>jstl</groupId>
+			<artifactId>jstl</artifactId>
+			<version>1.2</version>
+		</dependency>
 	
 		<dependency>
 			<groupId>commons-net</groupId>
