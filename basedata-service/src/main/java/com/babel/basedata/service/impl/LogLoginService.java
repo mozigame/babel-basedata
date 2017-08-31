@@ -193,11 +193,11 @@ public class LogLoginService extends BaseService<LogLoginPO> implements ILogLogi
 					size=sizeGet+0l;
 				}
 				logLoginList=new ArrayList<>();
-				LogInfoVO logInfoVO=null;
+				LogLoginPO logInfoVO=null;
 				for(int i=0; i<size; i++){
-					logInfoVO=(LogInfoVO)redisTemplate.boundListOps(redisKey).leftPop();
+					logInfoVO=(LogLoginPO)redisTemplate.boundListOps(redisKey).leftPop();
 					if(logInfoVO!=null){
-						logList.add(logInfoVO);
+						logLoginList.add(logInfoVO);
 					}
 				}
 				
