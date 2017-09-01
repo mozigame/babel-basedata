@@ -2,28 +2,35 @@ package com.babel.basedata.mongo.dao;
 
 import java.util.List;
 
-import com.babel.basedata.model.LogDbPO;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Component;
 
+import com.babel.basedata.model.LogDbPO;
+import com.babel.common.core.util.SpringContextUtil;
 import com.mongodb.BasicDBObject;
 @Component
 public class LogDbDao  implements ILogDbDao{
-	@Autowired
+//	@Autowired
     private MongoTemplate mongoTemplate;
+    
+    private MongoTemplate getMongoTemplate() {
+        if(SpringContextUtil.containsBean("mongoTemplate")) {
+            this.mongoTemplate=(MongoTemplate)SpringContextUtil.getBean("mongoTemplate");
+        }
+        return mongoTemplate;
+    }
 	
 	 /**  
      * 新增  
      * <br>------------------------------<br>  
      * @param logDb  
      */   
-    public void insert(LogDbPO logDb) {  
+    public void insert(LogDbPO logDb) {
         // TODO Auto-generated method stub  
-        mongoTemplate.insert(logDb);  
+        getMongoTemplate().insert(logDb);  
     }  
     /**  
      * 批量新增  
@@ -32,7 +39,7 @@ public class LogDbDao  implements ILogDbDao{
      */  
     public void insertAll(List<LogDbPO> logDbs) {  
         // TODO Auto-generated method stub  
-        mongoTemplate.insertAll(logDbs);  
+        getMongoTemplate().insertAll(logDbs);  
     }  
     /**  
      * 删除,按主键id, 如果主键的值为null,删除会失败  
@@ -42,7 +49,7 @@ public class LogDbDao  implements ILogDbDao{
     public void deleteById(Long id) {  
         // TODO Auto-generated method stub  
 //        LogDbPO logDb = new LogDbPO(id, null, 0);  
-        mongoTemplate.remove(new BasicDBObject("cid", id));  
+        getMongoTemplate().remove(new BasicDBObject("cid", id));  
     }  
     /**  
      * 按条件删除  
@@ -53,7 +60,7 @@ public class LogDbDao  implements ILogDbDao{
         // TODO Auto-generated method stub  
         Criteria criteria = Criteria.where("cid").is(criteriaLogDbPO.getCid());  
         Query query = new Query(criteria);  
-        mongoTemplate.remove(query, LogDbPO.class);  
+        getMongoTemplate().remove(query, LogDbPO.class);  
     }  
     /**  
      * 删除全部  
@@ -61,7 +68,7 @@ public class LogDbDao  implements ILogDbDao{
      */  
     public void deleteAll() {  
         // TODO Auto-generated method stub  
-        mongoTemplate.dropCollection(LogDbPO.class);  
+        getMongoTemplate().dropCollection(LogDbPO.class);  
     }  
     /**  
      * 按主键修改,  
@@ -74,7 +81,7 @@ public class LogDbDao  implements ILogDbDao{
         Criteria criteria = Criteria.where("cid").is(logDb.getCid());  
         Query query = new Query(criteria);  
         Update update = Update.update("descs", logDb.getDescs()).set("title", logDb.getTitle());  
-        mongoTemplate.updateFirst(query, update, LogDbPO.class);  
+        getMongoTemplate().updateFirst(query, update, LogDbPO.class);  
     }  
     /**  
      * 修改多条  
@@ -87,7 +94,7 @@ public class LogDbDao  implements ILogDbDao{
         Criteria criteria = Criteria.where("cid").gt(criteriaLogDbPO.getCid());;  
         Query query = new Query(criteria);  
         Update update = Update.update("descs", logDb.getDescs()).set("title", logDb.getTitle());  
-        mongoTemplate.updateMulti(query, update, LogDbPO.class);  
+        getMongoTemplate().updateMulti(query, update, LogDbPO.class);  
     }  
     /**  
      * 根据主键查询  
@@ -97,7 +104,7 @@ public class LogDbDao  implements ILogDbDao{
      */  
     public LogDbPO findById(String id) {  
         // TODO Auto-generated method stub  
-        return mongoTemplate.findById(id, LogDbPO.class);  
+        return getMongoTemplate().findById(id, LogDbPO.class);  
     }  
     /**  
      * 查询全部  
@@ -106,7 +113,7 @@ public class LogDbDao  implements ILogDbDao{
      */  
     public List<LogDbPO> findAll() {  
         // TODO Auto-generated method stub  
-        return mongoTemplate.findAll(LogDbPO.class);  
+        return getMongoTemplate().findAll(LogDbPO.class);  
     }  
     /**  
      * 按条件查询, 分页  
@@ -121,7 +128,7 @@ public class LogDbDao  implements ILogDbDao{
         Query query = getQuery(criteriaLogDbPO);  
         query.skip(skip);  
         query.limit(limit);  
-        return mongoTemplate.find(query, LogDbPO.class);  
+        return getMongoTemplate().find(query, LogDbPO.class);  
     }  
     /**  
      * 根据条件查询出来后 再去修改  
@@ -134,7 +141,7 @@ public class LogDbDao  implements ILogDbDao{
         // TODO Auto-generated method stub  
         Query query = getQuery(criteriaLogDbPO);  
         Update update = Update.update("title", updateLogDbPO.getTitle()).set("descs", updateLogDbPO.getDescs());  
-        return mongoTemplate.findAndModify(query, update, LogDbPO.class);  
+        return getMongoTemplate().findAndModify(query, update, LogDbPO.class);  
     }  
     /**  
      * 查询出来后 删除  
@@ -145,7 +152,7 @@ public class LogDbDao  implements ILogDbDao{
     public LogDbPO findAndRemove(LogDbPO criteriaLogDbPO) {  
         // TODO Auto-generated method stub  
         Query query = getQuery(criteriaLogDbPO);  
-        return mongoTemplate.findAndRemove(query, LogDbPO.class);  
+        return getMongoTemplate().findAndRemove(query, LogDbPO.class);  
     }  
     /**  
      * count  
@@ -156,7 +163,7 @@ public class LogDbDao  implements ILogDbDao{
     public long count(LogDbPO criteriaLogDbPO) {  
         // TODO Auto-generated method stub  
         Query query = getQuery(criteriaLogDbPO);  
-        return mongoTemplate.count(query, LogDbPO.class);  
+        return getMongoTemplate().count(query, LogDbPO.class);  
     }  
     /**  
      *  
