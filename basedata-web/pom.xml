@@ -50,7 +50,23 @@
 			          <target>1.8</target>  
 			        </configuration>  
 			      </plugin> 
-			</plugins>
+				<plugin>
+				    <artifactId>maven-deploy-plugin</artifactId>
+				    <executions>
+				        <execution>
+				            <id>default-deploy</id>
+				            <phase>deploy</phase>
+				            <goals>
+				                <goal>deploy</goal>
+				            </goals>
+				            <!-- skip默认deploy插件的执行 -->
+				            <configuration>
+				                <skip>true</skip>
+				            </configuration>
+				        </execution>
+	        		</executions>
+	        	</plugin>
+        	</plugins>
 		</pluginManagement>
 	</build>
 
