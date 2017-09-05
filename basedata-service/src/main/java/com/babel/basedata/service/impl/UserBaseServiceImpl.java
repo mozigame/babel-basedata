@@ -12,8 +12,8 @@ import com.babel.common.core.data.IUser;
 import com.babel.common.core.data.RetResult;
 import com.babel.common.core.service.IUserInfoService;
 
-@Service("userInfoService")
-public class UserInfoServiceImpl implements IUserInfoService{
+@Service("userBaseService")
+public class UserBaseServiceImpl implements IUserInfoService{
 	@Autowired
 	private IUserService userService;
 
