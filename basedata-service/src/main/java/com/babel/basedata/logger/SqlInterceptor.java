@@ -27,6 +27,8 @@ import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.type.TypeHandlerRegistry;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Value;
+
 import com.babel.common.core.data.RetResult;
 import com.babel.common.core.logger.ILogSqlManager;
 import com.babel.common.core.page.PageVO;
@@ -34,7 +36,6 @@ import com.babel.common.core.util.CommUtil;
 import com.babel.common.core.util.ConfigUtils;
 import com.babel.common.core.util.SpringContextUtil;
 import com.babel.common.web.context.JobContext;
-
 import com.google.gson.Gson;
 
 @Intercepts({
@@ -52,8 +53,8 @@ public class SqlInterceptor implements Interceptor {
 	private Date loadDate;//首次运行时间
 	public final static Set<String> ignoreSqlIdSet=CommUtil.newSet("SysconfigMapper.findSysconfigAll"
 			,"LogDbMapper.insert","LogDbMapper.insertList", "ModelMapper.selectByExample");
-
-	
+	@Value("${sys.runType}")
+	private String runType;
 	public Object intercept(Invocation invocation) throws Throwable {
 		final long time = System.currentTimeMillis();
 		if(logSqlManager==null){
@@ -115,7 +116,7 @@ public class SqlInterceptor implements Interceptor {
 				return returnValue;
 			}
 			
-			if("dev".equals(ConfigUtils.getConfigValue("sys.runType"))){
+			if("dev".equals(ConfigUtils.getConfigValue("sys.runType"))||"dev".equals(runType)){
 //				System.out.println("----sqlId="+sqlId+" sql="+sql+" \n returnValue="+returnValue);
 			}
 			
