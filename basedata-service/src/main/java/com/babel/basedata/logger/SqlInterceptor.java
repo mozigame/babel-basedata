@@ -53,8 +53,8 @@ public class SqlInterceptor implements Interceptor {
 	private Date loadDate;//首次运行时间
 	public final static Set<String> ignoreSqlIdSet=CommUtil.newSet("SysconfigMapper.findSysconfigAll"
 			,"LogDbMapper.insert","LogDbMapper.insertList", "ModelMapper.selectByExample");
-	@Value("${sys.runType}")
 	private String runType;
+	private String sqlLogDb;
 	public Object intercept(Invocation invocation) throws Throwable {
 		final long time = System.currentTimeMillis();
 		if(logSqlManager==null){
@@ -79,6 +79,7 @@ public class SqlInterceptor implements Interceptor {
 		String sql = getSql(configuration, boundSql, pMap);
 		Object returnValue = null;
 		HashMap<String, Object> paramMap=new HashMap<>();
+		String classMethod=null;
 		try {
 			paramMap.put("threadId",String.valueOf(Thread.currentThread().getId()));
 			paramMap.put("args", gson.toJson(pMap));
@@ -101,12 +102,15 @@ public class SqlInterceptor implements Interceptor {
 			//取得数据行数
 			Integer rows=this.getReturnRows(returnValue);
 			String sqlType=this.getOperTypeBySql(sql);
-			String classMethod=getClassMethod(sqlId);
+			classMethod=getClassMethod(sqlId);
 			paramMap.put("sqlType", sqlType);
 			paramMap.put("rows", rows);
 			
 			//忽略指定的查询类型
 			String ignoreSqlType=(String)configMap.get("sql.logSqlIgnore");
+			if(ignoreSqlType==null){
+				ignoreSqlType=(String)configMap.get("sql.ignoreSqlType");
+			}
 			if(ignoreSqlType==null){
 				ignoreSqlType="null";
 			}
@@ -116,8 +120,20 @@ public class SqlInterceptor implements Interceptor {
 				return returnValue;
 			}
 			
-			if("dev".equals(ConfigUtils.getConfigValue("sys.runType"))||"dev".equals(runType)){
-//				System.out.println("----sqlId="+sqlId+" sql="+sql+" \n returnValue="+returnValue);
+			if(runType==null){
+				runType=ConfigUtils.getConfigValue("sys.runType", "prod");
+			}
+			if(sqlLogDb==null){
+				sqlLogDb=ConfigUtils.getConfigValue("sys.sqlLogDb", "false");
+				
+			}
+			if("dev".equals(runType)){
+				logger.debug("----sqlId="+sqlId+":"+runTime+"ms"+":"+sql);
+			}
+			
+			if("false".equals(sqlLogDb)){
+				logger.debug("----sqlId="+sqlId+":"+runTime+"ms"+":"+sql);
+				return returnValue;
 			}
 			
 			//忽略mybatis的mapperId的对应的查询日志
@@ -129,7 +145,8 @@ public class SqlInterceptor implements Interceptor {
 			
 			Set<String> ignoreSqlIdsOnLoad=(Set<String>)configMap.get("sql.ignoreSqlIdOnLoad");
 //			System.out.println("------ignoreSqlIds="+ignoreSqlIds);
-			if(loadDate.after(DateUtils.addSeconds(startTime, -SQL_LOG_IGNORE_ON_LOAD_LIMIT))//在开机启动的60秒内不起作用
+			boolean isLoadDelay=loadDate.after(DateUtils.addSeconds(startTime, -SQL_LOG_IGNORE_ON_LOAD_LIMIT));
+			if(isLoadDelay//在开机启动的60秒内不起作用
 					&& this.isIgnoreSqlId(classMethod, ignoreSqlIdsOnLoad)){
 				logger.info("-----ignoreSqlIdOnLoad sqlId="+sqlId+":"+runTime+"ms"+":"+sql);
 				return returnValue;
@@ -154,6 +171,11 @@ public class SqlInterceptor implements Interceptor {
 		}
 		catch (Exception e) {
 			long runTime = (System.currentTimeMillis() - time);
+			Set<String> ignoreSqlIdSet=(Set<String>)configMap.get("sql.ignoreSqlId");
+			if(this.isIgnoreSqlId(classMethod, ignoreSqlIdSet)){
+				logger.error("----intercept--method="+classMethod+" error:"+e.getMessage(), e);
+				throw e;
+			}
 			this.logSqlManager.addLogSqlAsync(startTime, sqlId, sql, runTime, e, paramMap);
 			throw e;
 		}
@@ -299,9 +321,9 @@ public class SqlInterceptor implements Interceptor {
 			}
 		}
 		//用于处理要保存的数据中含有$字符，造成replaceFirst异常
-		if(value!=null && value.indexOf("$")>0){
-			value=value.replaceAll("\\$", TMP_$_STR);
-		}
+//		if(value!=null && value.indexOf("$")>0){
+//			value=value.replaceAll("\\$", TMP_$_STR);
+//		}
 		return value;
 	}
 	
@@ -318,23 +340,29 @@ public class SqlInterceptor implements Interceptor {
 				sql = sql.replaceFirst("\\?",getParameterValue(parameterObject));
 			} else {
 				MetaObject metaObject = configuration.newMetaObject(parameterObject);
-				for (ParameterMapping parameterMapping : parameterMappings) {
-					String propertyName = parameterMapping.getProperty();
-					if (metaObject.hasGetter(propertyName)) {
-						Object obj = metaObject.getValue(propertyName);
-						sql = sql.replaceFirst("\\?", getParameterValue(obj));
-						paramMap.put(propertyName, obj);
-					} else if (boundSql.hasAdditionalParameter(propertyName)) {
-						Object obj = boundSql.getAdditionalParameter(propertyName);
-						sql = sql.replaceFirst("\\?", getParameterValue(obj));
-						paramMap.put(propertyName, obj);
+				try {
+					for (ParameterMapping parameterMapping : parameterMappings) {
+						String propertyName = parameterMapping.getProperty();
+						if (metaObject.hasGetter(propertyName)) {
+							Object obj = metaObject.getValue(propertyName);
+							sql = sql.replaceFirst("\\?", getParameterValue(obj));
+							paramMap.put(propertyName, obj);
+						} else if (boundSql.hasAdditionalParameter(propertyName)) {
+							Object obj = boundSql.getAdditionalParameter(propertyName);
+							sql = sql.replaceFirst("\\?", getParameterValue(obj));
+							paramMap.put(propertyName, obj);
+						}
 					}
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+//					e.printStackTrace();
+					logger.warn("---showSql--parameterObject="+parameterObject+ " error:"+e.getMessage());
 				}
 			}
 		}
-		if(sql.indexOf(TMP_$_STR)>0){
-			sql=sql.replaceAll(TMP_$_STR, "$");
-		}
+//		if(sql.indexOf(TMP_$_STR)>0){
+//			sql=sql.replaceAll(TMP_$_STR, "$");
+//		}
 		return sql;
 
 	}
