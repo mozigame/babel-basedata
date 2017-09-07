@@ -54,6 +54,7 @@ import com.babel.basedata.service.IModuleService;
 import com.babel.basedata.service.IUserRoleService;
 import com.babel.basedata.service.IUserService;
 import com.babel.basedata.util.RetryRuleUtils;
+import com.babel.basedata.util.Sysconfigs;
 import com.babel.common.core.data.RetResult;
 import com.babel.common.core.entity.UserPermitVO;
 import com.babel.common.core.logger.ILogMsgManager;
@@ -417,20 +418,24 @@ public class LoginController extends WebBaseController{
 			}
 			
 			
-			if(null == code || "".equals(code)){//判断效验码
-				//效验码为空
-				loginRet.initError(RetResult.msg_codes.ERR_DATA_INPUT, "Valid code empty", null);
-//				logLoginService.createLogLoginAsync(logLogin, loginRet);
-				return loginRet;
-			}
-			
-			
-			Object ifCloseValidCode=getEnvMap().get("dev.no_validCode");//是否关闭验证码
-			if(!"true".equals(ifCloseValidCode) && !(sessionCode!=null && sessionCode.equalsIgnoreCase(code))){//判断登录验证码
-				loginRet.initError(RetResult.msg_codes.ERR_DATA_INPUT, "Valid code invalid", null);
-				logLoginService.createLogLoginAsync(logLogin, loginRet);
-				return loginRet;
-			}
+			Map<String, Object> envMap=getEnvMap(); 
+            if(envMap.isEmpty()){
+            	envMap=Sysconfigs.getEnvMap();
+            	AppContext.putEnvMap(envMap);
+            }
+            Object ifCloseValidCode = envMap.get("dev.no_validCode");//是否关闭验证码
+            if (!"true".equals(ifCloseValidCode) ){
+	            if (null == code || "".equals(code)) {//判断效验码
+	                //效验码为空
+	                loginRet.initError(RetResult.msg_codes.ERR_DATA_INPUT, "Valid code empty", null);
+	                return loginRet;
+	            }
+	            if (!(sessionCode != null && sessionCode.equalsIgnoreCase(code))) {//判断登录验证码
+	                loginRet.initError(RetResult.msg_codes.ERR_DATA_INPUT, "Valid code invalid", null);
+	                logLoginService.createLogLoginAsync(logLogin, loginRet);
+	                return loginRet;
+	            }
+            }
 			
 			
 
