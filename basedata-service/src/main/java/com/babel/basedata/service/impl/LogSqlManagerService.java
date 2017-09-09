@@ -281,6 +281,9 @@ public class LogSqlManagerService implements ILogSqlManager {
 			, final long runTime, final Throwable exp, final HashMap<String, Object> paramMap){
 		logger.debug("------addLogSqlAsync--saveLogBatchSize="+saveLogBatchSize+" sqlId="+sqlId+" runTime="+runTime);
 		
+		if(!RedisUtil.isHasRedisTemplate()){
+			return;
+		}
 		final String className=this.getClass().getSimpleName();
 		String logType="logSql";
 		final Class clazz=this.getClass();
@@ -309,6 +312,9 @@ public class LogSqlManagerService implements ILogSqlManager {
 //			return;
 //		}
 		
+		if(!RedisUtil.isHasRedisTemplate()){
+			return;
+		}
 		
 		String logType="logService";
 		final Class clazz=this.getClass();
@@ -321,6 +327,9 @@ public class LogSqlManagerService implements ILogSqlManager {
 	}
 	
 	public void executeLogSql(){
+		if(!RedisUtil.isHasRedisTemplate()){
+			return;
+		}
 		initRedis();
 		String keyList=REDIS_KEY_LOG_SQLS;
 		this.saveLogDbBatch(keyList);
