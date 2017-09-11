@@ -438,7 +438,7 @@ public class SysconfigServiceImpl extends BaseService<SysconfigPO> implements IS
 		}
 		if(findSysconfig1MaxDate==null || findSysconfig1LoadDate.before(DateUtils.addSeconds(new Date(), -180))){//超过3分钟就重新检查一下数据时间
 			Example example =this.findSysconfigAllExample(confType, parentCode);
-			maxDate= this.mapper.selectMaxModifyDateByExample(example);
+			maxDate= (Date)this.mapper.selectMaxModifyDateByExample(example);
 //			System.out.println("-----findSysconfig1LoadDate="+findSysconfig1LoadDate+" newDate="+DateUtils.addSeconds(new Date(), -180));
 			findSysconfig1MaxDate=maxDate;
 			findSysconfig1LoadDate=new Date();

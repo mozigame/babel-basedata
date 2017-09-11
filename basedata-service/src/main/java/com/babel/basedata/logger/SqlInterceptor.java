@@ -27,7 +27,6 @@ import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.type.TypeHandlerRegistry;
 import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Value;
 
 import com.babel.common.core.data.RetResult;
 import com.babel.common.core.logger.ILogSqlManager;
@@ -128,11 +127,13 @@ public class SqlInterceptor implements Interceptor {
 				
 			}
 			if("dev".equals(runType)){
-				logger.debug("----sqlId="+sqlId+":"+runTime+"ms"+":"+sql);
+				logger.debug("----runType="+runType+" sqlId="+sqlId+":"+runTime+"ms"+":"+sql);
 			}
 			
 			if("false".equals(sqlLogDb)){
-				logger.debug("----sqlId="+sqlId+":"+runTime+"ms"+":"+sql);
+				if(!"dev".equals(runType)){
+					logger.debug("----sqlId="+sqlId+":"+runTime+"ms"+":"+sql);
+				}
 				return returnValue;
 			}
 			
