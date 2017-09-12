@@ -56,7 +56,7 @@ public class SqlInterceptor implements Interceptor {
 	private String sqlLogDb;
 	public Object intercept(Invocation invocation) throws Throwable {
 		final long time = System.currentTimeMillis();
-		if(logSqlManager==null){
+		if(logSqlManager==null && SpringContextUtil.containsBean("logSqlManager")){
 			this.logSqlManager=(ILogSqlManager)SpringContextUtil.getBean("logSqlManager");
 		}
 		Date startTime= new Date();
@@ -168,7 +168,8 @@ public class SqlInterceptor implements Interceptor {
 			
 //			long runTime2 = (System.currentTimeMillis() - time);
 //			System.out.println("----runTime="+runTime+"/"+runTime2);
-			this.logSqlManager.addLogSqlAsync(startTime, sqlId, sql, runTime, null, paramMap);
+			if(logSqlManager!=null)
+				this.logSqlManager.addLogSqlAsync(startTime, sqlId, sql, runTime, null, paramMap);
 		}
 		catch (Exception e) {
 			long runTime = (System.currentTimeMillis() - time);
@@ -177,7 +178,8 @@ public class SqlInterceptor implements Interceptor {
 				logger.error("----intercept--method="+classMethod+" error:"+e.getMessage(), e);
 				throw e;
 			}
-			this.logSqlManager.addLogSqlAsync(startTime, sqlId, sql, runTime, e, paramMap);
+			if(logSqlManager!=null)
+				this.logSqlManager.addLogSqlAsync(startTime, sqlId, sql, runTime, e, paramMap);
 			throw e;
 		}
 		return returnValue;
