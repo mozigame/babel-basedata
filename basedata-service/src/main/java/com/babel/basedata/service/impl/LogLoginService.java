@@ -153,7 +153,7 @@ public class LogLoginService extends BaseService<LogLoginPO> implements ILogLogi
 						getMapper().insert(record);
 					}
 					else{
-						redisTemplate.boundListOps(REDIS_LOG_LOGIN).rightPush(record);
+						redisTemplate.boundListOps(REDIS_LOG_LOGIN).leftPush(record);
 					}
 				} catch (Exception e) {
 					logger.error("----createLogLoginAsync, error:"+e.getMessage(), e);
@@ -195,7 +195,7 @@ public class LogLoginService extends BaseService<LogLoginPO> implements ILogLogi
 				logLoginList=new ArrayList<>();
 				LogLoginPO logInfoVO=null;
 				for(int i=0; i<size; i++){
-					logInfoVO=(LogLoginPO)redisTemplate.boundListOps(redisKey).leftPop();
+					logInfoVO=(LogLoginPO)redisTemplate.boundListOps(redisKey).rightPop();
 					if(logInfoVO!=null){
 						logLoginList.add(logInfoVO);
 					}

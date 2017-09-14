@@ -372,7 +372,7 @@ public class LogSqlManagerService implements ILogSqlManager {
 					logList=new ArrayList<>();
 					LogInfoVO logInfoVO=null;
 					for(int i=0; i<size; i++){
-						logInfoVO=(LogInfoVO)redisTemplate.boundListOps(redisKey).leftPop();
+						logInfoVO=(LogInfoVO)redisTemplate.boundListOps(redisKey).rightPop();
 						if(logInfoVO!=null){
 							logList.add(logInfoVO);
 						}

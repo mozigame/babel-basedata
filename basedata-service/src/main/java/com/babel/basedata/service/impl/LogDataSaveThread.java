@@ -102,7 +102,7 @@ public class LogDataSaveThread extends Thread implements  Runnable {
 			if(this.logSqlManager.getSaveLogBatchSize()>0 && logInfoVO!=null){
 				initRedis();
 				if(redisTemplate!=null){
-					redisTemplate.boundListOps(redisKey).rightPush(logInfoVO);
+					redisTemplate.boundListOps(redisKey).leftPush(logInfoVO);
 					return;
 				}
 			}

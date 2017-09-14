@@ -90,7 +90,7 @@ public class LogManagerImpl implements ILogManager {
 							LogInfoVO logInfo=new LogInfoVO(startTime,null, null,logLevel, runTime,exp,(HashMap)pointMap);
 							logInfo.setMethod(method);
 							logInfo.setIp(ip);
-							Long value=redisTemplate.boundListOps(REDIS_KEY_LOG_AUDIT).rightPush(logInfo);
+							Long value=redisTemplate.boundListOps(REDIS_KEY_LOG_AUDIT).leftPush(logInfo);
 //							System.out.println("---"+value);
 							return;
 						}
@@ -131,7 +131,7 @@ public class LogManagerImpl implements ILogManager {
 							String descs=(String)pointMap.get("logAudit.descs");
 							RetResult<String> retStr=getRetObj(descs, retObj);
 							logInfo.setRetStr(retStr);
-							Long value=redisTemplate.boundListOps(REDIS_KEY_LOG_AUDIT).rightPush(logInfo);
+							Long value=redisTemplate.boundListOps(REDIS_KEY_LOG_AUDIT).leftPush(logInfo);
 //							System.out.println("---"+value);
 							return;
 						}
@@ -354,7 +354,7 @@ public class LogManagerImpl implements ILogManager {
 					logList=new ArrayList<>();
 					LogInfoVO logInfoVO=null;
 					for(int i=0; i<size; i++){
-						logInfoVO=(LogInfoVO)redisTemplate.boundListOps(redisKey).leftPop();
+						logInfoVO=(LogInfoVO)redisTemplate.boundListOps(redisKey).rightPop();
 						if(logInfoVO!=null){
 							logList.add(logInfoVO);
 						}
