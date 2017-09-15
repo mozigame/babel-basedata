@@ -168,7 +168,7 @@ public class SqlInterceptor implements Interceptor {
 			
 //			long runTime2 = (System.currentTimeMillis() - time);
 //			System.out.println("----runTime="+runTime+"/"+runTime2);
-			if(logSqlManager!=null)
+			if(logSqlManager!=null && "true".equals(sqlLogDb))
 				this.logSqlManager.addLogSqlAsync(startTime, sqlId, sql, runTime, null, paramMap);
 		}
 		catch (Exception e) {
@@ -178,7 +178,7 @@ public class SqlInterceptor implements Interceptor {
 				logger.error("----intercept--method="+classMethod+" error:"+e.getMessage(), e);
 				throw e;
 			}
-			if(logSqlManager!=null)
+			if(logSqlManager!=null && "true".equals(sqlLogDb))
 				this.logSqlManager.addLogSqlAsync(startTime, sqlId, sql, runTime, e, paramMap);
 			throw e;
 		}
