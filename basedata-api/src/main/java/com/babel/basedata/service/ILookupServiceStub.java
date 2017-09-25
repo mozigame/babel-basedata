@@ -3,7 +3,7 @@ package com.babel.basedata.service;
 import java.util.HashMap;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+//import org.apache.log4j.Logger;
 
 import com.babel.basedata.model.LookupPO;
 import com.babel.common.core.data.RetResult;
@@ -14,7 +14,7 @@ import com.babel.common.core.service.impl.BaseService;
 import tk.mybatis.mapper.common.MapperMy;
 
 public class ILookupServiceStub  extends BaseService<LookupPO> implements ILookupService{
-	private static Logger logger = Logger.getLogger(ILookupServiceStub.class);
+//	private static Logger logger = Logger.getLogger(ILookupServiceStub.class);
 	private final ILookupService lookupService;
 
 	// 构造函数传入真正的远程代理对象
@@ -34,7 +34,7 @@ public class ILookupServiceStub  extends BaseService<LookupPO> implements ILooku
 
 	@Override
 	public PageVO<LookupPO> findPageByLookup(LookupPO search, PageVO<LookupPO> page) {
-		logger.info("------stub--findPageByLookup");
+//		logger.info("------stub--findPageByLookup");
 		return this.lookupService.findPageByLookup(search, page);
 	}
 
