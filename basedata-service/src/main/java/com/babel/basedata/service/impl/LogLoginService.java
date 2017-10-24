@@ -1,5 +1,7 @@
 package com.babel.basedata.service.impl;
 
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.log;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -12,7 +14,6 @@ import org.springframework.util.StringUtils;
 
 import com.alibaba.druid.support.logging.Log;
 import com.alibaba.druid.support.logging.LogFactory;
-import com.babel.basedata.entity.LogInfoVO;
 import com.babel.basedata.mapper.LogLoginMapper;
 import com.babel.basedata.model.LogLoginPO;
 import com.babel.basedata.model.UserPO;
@@ -21,9 +22,8 @@ import com.babel.basedata.util.Sysconfigs;
 import com.babel.common.core.data.RetResult;
 import com.babel.common.core.page.PageVO;
 import com.babel.common.core.service.impl.BaseService;
-import com.babel.common.core.util.RedisListUtil;
+import com.babel.common.core.util.RedisLock;
 import com.babel.common.core.util.RedisUtil;
-import com.babel.common.core.util.SpringContextUtil;
 import com.babel.common.core.util.TaskExecutorUtils;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -168,13 +168,19 @@ public class LogLoginService extends BaseService<LogLoginPO> implements ILogLogi
 	 * @param redisTemplate
 	 */
 	private synchronized void saveLogLoginBatch(final RedisTemplate redisTemplate){
-		int timeLimit=3;
+		int timeLimit=3*1000;
 		final String redisKey=REDIS_LOG_LOGIN;
 		if(RedisUtil.isRunLimit(this.getClass(), timeLimit, redisKey)){//间隔低于限制时间
 			return;
 		}
-		if(!RedisUtil.tryLock(redisKey)){
-			return;
+		String lockKey = "moveDoMapToListLock";
+		RedisLock lock = new RedisLock(redisTemplate, lockKey, timeLimit, 10000);
+		try {
+			if(lock.isLock()){
+				return;
+			}
+		} catch (InterruptedException e) {
+			logger.error("----saveLogLoginBatch--", e);
 		}
 		final int sizeGet=200;
 		TaskExecutor taskExecutor=TaskExecutorUtils.getExecutorSingle(Sysconfigs.getAppType(), this.getClass(), "saveLogLoginBatch", timeLimit);
@@ -205,7 +211,7 @@ public class LogLoginService extends BaseService<LogLoginPO> implements ILogLogi
 					logger.info("------saveLogLoginBatch--sizeGet="+sizeGet+" listSize="+logLoginList.size());
 					mapper.insertList(logLoginList);
 				}
-				RedisUtil.unLock(redisKey);
+				lock.unlock();
 			}
 		});
 	}

@@ -28,6 +28,7 @@ import com.babel.common.core.logger.ILogManager;
 import com.babel.common.core.logger.LogAudit;
 import com.babel.common.core.util.CommUtil;
 import com.babel.common.core.util.RedisListUtil;
+import com.babel.common.core.util.RedisLock;
 import com.babel.common.core.util.RedisUtil;
 import com.babel.common.core.util.ServerUtil;
 import com.babel.common.core.util.SpringContextUtil;
@@ -323,18 +324,23 @@ public class LogManagerImpl implements ILogManager {
 	}
 	
 	private synchronized void saveLogAuditBatch(final String redisKey){
-		int timeLimit=3;
+		int timeLimit=3*1000;
 		if(RedisUtil.isRunLimit(this.getClass(), timeLimit, redisKey)){
 			return;
 		}
-		if(!RedisUtil.tryLock(redisKey)){
-			return;
+		RedisLock lock = new RedisLock(redisTemplate, redisKey, timeLimit, 10000);
+		try {
+			if(lock.isLock()){
+				return;
+			}
+		} catch (InterruptedException e1) {
+			logger.error("----saveLogAuditBatch--", e1);
 		}
 		TaskExecutor taskExecutor=TaskExecutorUtils.getExecutorSingle(Sysconfigs.getAppType(), this.getClass(), "saveLogAuditBatch", timeLimit);
 		taskExecutor.execute(new Runnable() {
 			public void run() {
 				saveLogBatch(redisKey);
-				RedisUtil.unLock(redisKey);
+				lock.unlock();
 			}
 			private void saveLogBatch(final String redisKey){
 				List<LogInfoVO> logList=null;

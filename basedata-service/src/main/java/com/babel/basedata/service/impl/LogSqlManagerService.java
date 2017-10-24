@@ -25,6 +25,7 @@ import com.babel.basedata.service.IModelService;
 import com.babel.basedata.util.Sysconfigs;
 import com.babel.common.core.logger.ILogSqlManager;
 import com.babel.common.core.util.CommUtil;
+import com.babel.common.core.util.RedisLock;
 import com.babel.common.core.util.RedisUtil;
 import com.babel.common.core.util.ServerUtil;
 import com.babel.common.core.util.SpringContextUtil;
@@ -336,18 +337,26 @@ public class LogSqlManagerService implements ILogSqlManager {
 	}
 	
 	private synchronized void saveLogDbBatch(final String redisKey){
-		int timeLimit=5;
+		int timeLimit=5*1000;
 		if(RedisUtil.isRunLimit(this.getClass(), timeLimit, redisKey+"saveLogDbBatch", false)){
 			return;
 		}
-		if(!RedisUtil.tryLock(redisKey)){
-			return;
+		RedisLock lock = new RedisLock(redisTemplate, redisKey, timeLimit, 10000);
+		try {
+			if(lock.isLock()){
+				return;
+			}
+		} catch (InterruptedException e1) {
+			logger.error("----saveLogDbBatch--", e1);
 		}
+//		if(!RedisUtil.tryLock(redisKey)){
+//			return;
+//		}
 		TaskExecutor taskExecutor=TaskExecutorUtils.getExecutorSingle(Sysconfigs.getAppType(), this.getClass(), "saveLogDbBatch", timeLimit);
 		taskExecutor.execute(new Runnable() {
 			public void run() {
 				saveLogDbBatch(redisKey);
-				RedisUtil.unLock(redisKey);
+				lock.unlock();
 			}
 
 			/**
