@@ -44,11 +44,11 @@
 	     <aop:include name="logServiceAspect" />  
 	 </aop:aspectj-autoproxy>  
 	
-	<!-- 
+	<!-- -->
 	<import resource="spring-mybatis.xml" />
 	<import resource="spring-cache-redis.xml" />
 	<import resource="spring-mongo.xml" />
-	 -->
+	 
 	
 	<beans profile="develop">  
 	    <context:property-placeholder location="classpath:service-dev.properties"/>  
