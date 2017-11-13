@@ -6,6 +6,7 @@ import javax.servlet.ServletContextEvent;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import com.babel.basedata.model.FuncRetryPO;
@@ -40,6 +41,11 @@ public class RetryRuleLoader  implements IContextTaskLoader {
 		return ret;
 	}
 	
+	@Scheduled(fixedRate = 180000)//3分钟加载一次
+	public void initRetry(){
+		initFuncRetry();
+		this.initRetryRule();
+	}
 	
 	private void initFuncRetry(){
 		this.log.info("-----load initFuncRetry--start--");

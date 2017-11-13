@@ -107,7 +107,7 @@ public class RetryRuleUtils {
 	public static IRetryRuleCheckService getCheckServiceByFuncRuleCode(String funcRetryCode){
 		FuncRetryPO funcRetry=funcRetryMap.get(funcRetryCode);
 		if(funcRetry==null){
-			logger.warn("----funcRetryCode="+funcRetryCode+" is not exist on funcRetryMap");
+			logger.warn("----funcRetryCode="+funcRetryCode+" is not exist on funcRetryMap:"+funcRetryMap.keySet());
 			return null;
 		}
 		String ruleCode=funcRetry.getRetryRule_code();

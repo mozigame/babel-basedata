@@ -10,7 +10,6 @@ import org.springframework.util.StringUtils;
 
 import com.alibaba.druid.support.logging.Log;
 import com.alibaba.druid.support.logging.LogFactory;
-import com.babel.basedata.logger.LogService;
 import com.babel.basedata.mapper.FuncRetryMapper;
 import com.babel.basedata.model.FuncRetryPO;
 import com.babel.basedata.model.RetryRulePO;
@@ -199,7 +198,7 @@ public class FuncRetryServiceImpl extends BaseService<FuncRetryPO> implements IF
 		}
 	}
 	
-	@LogService(title="funcRetry.create",author="cjh",calls="insert", descs="cid=#{0.cid},code=#{0.code}")
+//	@LogService(title="funcRetry.create",author="cjh",calls="insert", descs="cid=#{0.cid},code=#{0.code}")
 	public RetResult<Long> create(FuncRetryPO record){
 		logger.info("----create--");
 //		this.logDbService.info(record, "create", "start", 0l);
@@ -216,7 +215,7 @@ public class FuncRetryServiceImpl extends BaseService<FuncRetryPO> implements IF
 		return ret;
 	}
 	
-	@LogService(title="funcRetry.update",author="cjh",calls="updateByPrimaryKey", descs="cid=#{0.cid},code=#{0.code}")
+//	@LogService(title="funcRetry.update",author="cjh",calls="updateByPrimaryKey", descs="cid=#{0.cid},code=#{0.code}")
 	public RetResult<Long> update(FuncRetryPO record){
 		logger.info("----update--");
 		RetResult<Long> ret = new RetResult<Long>();
@@ -237,7 +236,7 @@ public class FuncRetryServiceImpl extends BaseService<FuncRetryPO> implements IF
 		return ret;
 	}
 	
-	@LogService(title="funcRetry.deleteVirtual",author="cjh",calls="updateByPrimaryKeySelective", descs="cid=#{1}")
+//	@LogService(title="funcRetry.deleteVirtual",author="cjh",calls="updateByPrimaryKeySelective", descs="cid=#{1}")
 	public RetResult<Integer> deleteVirtual(Long operId, Long cid){
 		logger.info("----update--");
 //		this.logDbService.info(null, "update", "start", 0l);

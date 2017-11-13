@@ -8,7 +8,6 @@ import org.springframework.util.StringUtils;
 
 import com.alibaba.druid.support.logging.Log;
 import com.alibaba.druid.support.logging.LogFactory;
-import com.babel.basedata.logger.LogService;
 import com.babel.basedata.mapper.RetryRuleMapper;
 import com.babel.basedata.model.RetryRulePO;
 import com.babel.basedata.service.IRetryRuleService;
@@ -145,7 +144,7 @@ public class RetryRuleServiceImpl extends BaseService<RetryRulePO> implements IR
 //		
 //	}
 	
-	@LogService(title="retryRule.create",author="cjh",calls="insert", descs="cid=#{0.cid},code=#{0.code}")
+//	@LogService(title="retryRule.create",author="cjh",calls="insert", descs="cid=#{0.cid},code=#{0.code}")
 	public RetResult<Long> create(RetryRulePO record){
 		logger.info("----create--");
 //		this.logDbService.info(record, "create", "start", 0l);
@@ -161,7 +160,7 @@ public class RetryRuleServiceImpl extends BaseService<RetryRulePO> implements IR
 		return ret;
 	}
 	
-	@LogService(title="retryRule.update",author="cjh",calls="updateByPrimaryKey", descs="cid=#{0.cid},code=#{0.code}")
+//	@LogService(title="retryRule.update",author="cjh",calls="updateByPrimaryKey", descs="cid=#{0.cid},code=#{0.code}")
 	public RetResult<Long> update(RetryRulePO record){
 		logger.info("----update--");
 		RetResult<Long> ret = new RetResult<Long>();
@@ -181,7 +180,7 @@ public class RetryRuleServiceImpl extends BaseService<RetryRulePO> implements IR
 		return ret;
 	}
 	
-	@LogService(title="retryRule.deleteVirtual",author="cjh",calls="updateByPrimaryKeySelective", descs="cid=#{1}")
+//	@LogService(title="retryRule.deleteVirtual",author="cjh",calls="updateByPrimaryKeySelective", descs="cid=#{1}")
 	public RetResult<Integer> deleteVirtual(Long operId, Long cid) throws RetException{
 		logger.info("----update--");
 //		this.logDbService.info(null, "update", "start", 0l);
