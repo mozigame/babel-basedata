@@ -15,6 +15,7 @@ import com.babel.basedata.service.IFuncRetryService;
 import com.babel.basedata.service.IRetryRuleDetailService;
 import com.babel.basedata.service.IRetryRuleService;
 import com.babel.common.core.data.RetResult;
+import com.babel.common.core.util.SpringContextUtil;
 import com.babel.common.web.loader.IContextTaskLoader;
 
 /**
@@ -42,9 +43,12 @@ public class RetryRuleLoader  implements IContextTaskLoader {
 	}
 	
 	@Scheduled(fixedRate = 180000)//3分钟加载一次
-	public void initRetry(){
-		initFuncRetry();
-		this.initRetryRule();
+	public void reloadRetry(){
+		boolean isBasedata=SpringContextUtil.containsBean("dataSourceBasedata");
+		if(isBasedata){
+			initFuncRetry();
+			this.initRetryRule();
+		}
 	}
 	
 	private void initFuncRetry(){
