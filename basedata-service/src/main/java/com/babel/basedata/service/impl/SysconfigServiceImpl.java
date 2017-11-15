@@ -182,7 +182,8 @@ public class SysconfigServiceImpl extends BaseService<SysconfigPO> implements IS
 		}
 		record.initCreate();
 		try {
-			this.getMapper().insertSysconfig(record);
+//			this.getMapper().insertSysconfig(record);
+			this.getMapper().insert(record);
 			ret.setData(record.getCid());
 			this.findSysconfigAll_cacheFlush(record.getConfType(), record.getPid());
 		} catch (Exception e) {

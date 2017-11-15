@@ -263,7 +263,7 @@ public class Sysconfigs {
 								entity1.setValueDefault(defaul.toString());
 							}
 							sysconfigService.create(entity1);
-							logger.warn("--Sysconfigs--sysconfigService.create success, key="+key);
+							logger.warn("--Sysconfigs--sysconfigService.create success, key="+key+" cid="+entity1.getCid());
 						}
 					}
 				}

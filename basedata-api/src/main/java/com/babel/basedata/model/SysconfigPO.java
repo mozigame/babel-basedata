@@ -16,6 +16,7 @@ public class SysconfigPO extends BaseEntity {
     @Id
 //    @SequenceGenerator(name="",sequenceName="select _nextval('_tf_sysconfig_cid_seq')")
     @GeneratedValue(generator = "JDBC")
+    @Column(name = "cid")
     private Long cid;
 
     /**
