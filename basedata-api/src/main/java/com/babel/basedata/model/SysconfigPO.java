@@ -1,8 +1,8 @@
 package com.babel.basedata.model;
 
 import javax.persistence.Column;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -14,7 +14,8 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 @JsonInclude(Include.NON_NULL)
 public class SysconfigPO extends BaseEntity {
     @Id
-    @SequenceGenerator(name="",sequenceName="select _nextval('_tf_sysconfig_cid_seq')")
+//    @SequenceGenerator(name="",sequenceName="select _nextval('_tf_sysconfig_cid_seq')")
+    @GeneratedValue(generator = "JDBC")
     private Long cid;
 
     /**

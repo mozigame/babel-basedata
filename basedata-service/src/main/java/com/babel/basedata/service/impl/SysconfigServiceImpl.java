@@ -17,7 +17,6 @@ import org.springframework.util.StringUtils;
 
 import com.alibaba.druid.support.logging.Log;
 import com.alibaba.druid.support.logging.LogFactory;
-import com.babel.basedata.logger.LogService;
 import com.babel.basedata.mapper.SysconfigMapper;
 import com.babel.basedata.model.SysconfigPO;
 import com.babel.basedata.service.ISysconfigService;
@@ -103,7 +102,7 @@ public class SysconfigServiceImpl extends BaseService<SysconfigPO> implements IS
 	}
 	
 	@Override
-	@LogService(title="lookup.findPageBySysconfig",author="cjh",calls="selectByExample")
+//	@LogService(title="lookup.findPageBySysconfig",author="cjh",calls="selectByExample")
 	public PageVO<SysconfigPO> findPageBySysconfig(SysconfigPO sysconfig, PageVO<SysconfigPO> page) {
 		logger.info("----findSysconfigById--id="+sysconfig.getCid()+" status="+sysconfig.getStatus());
 		Example example = new Example(SysconfigPO.class);
@@ -171,7 +170,7 @@ public class SysconfigServiceImpl extends BaseService<SysconfigPO> implements IS
 	}
 	
 	@Override
-	@LogService(title="lookup.create",author="cjh",calls="insert")
+//	@LogService(title="lookup.create",author="cjh",calls="insert")
 	public RetResult<Long> create(SysconfigPO record){
 		logger.info("----create--");
 		long time=System.currentTimeMillis();
@@ -229,7 +228,7 @@ public class SysconfigServiceImpl extends BaseService<SysconfigPO> implements IS
 	}
 	
 	@Override
-	@LogService(title="lookup.update",author="cjh",calls="updateByPrimaryKey")
+//	@LogService(title="lookup.update",author="cjh",calls="updateByPrimaryKey")
 	public RetResult<Long> update(SysconfigPO record){
 		logger.info("----update--");
 //		long time=System.currentTimeMillis();
@@ -481,7 +480,7 @@ public class SysconfigServiceImpl extends BaseService<SysconfigPO> implements IS
 	}
 	
 	@Override
-	@LogService(title="lookup.deleteVirtual",author="cjh",calls="findSysconfigById,updateByPrimaryKeySelective")
+//	@LogService(title="lookup.deleteVirtual",author="cjh",calls="findSysconfigById,updateByPrimaryKeySelective")
 	public RetResult<Integer> deleteVirtual(Long operUserId, Long cid){
 		logger.info("----update--");
 //		long time=System.currentTimeMillis();

@@ -37,14 +37,21 @@ public class RetryRuleLoader  implements IContextTaskLoader {
 	@Override
 	public RetResult<String> execute(ServletContextEvent event) {
 		RetResult<String> ret = new RetResult<String>();
-		initFuncRetry();
-		this.initRetryRule();
+		boolean isBasedata=SpringContextUtil.containsBean("dataSourceBasedata");
+		log.debug("-----execute--isBasedata="+isBasedata);
+		System.out.println("-----execute--isBasedata="+isBasedata);
+		if(isBasedata){
+			initFuncRetry();
+			this.initRetryRule();
+		}
 		return ret;
 	}
 	
 	@Scheduled(fixedRate = 180000)//3分钟加载一次
 	public void reloadRetry(){
 		boolean isBasedata=SpringContextUtil.containsBean("dataSourceBasedata");
+		log.debug("-----reloadRetry--isBasedata="+isBasedata);
+		System.out.println("-----reloadRetry--isBasedata="+isBasedata);
 		if(isBasedata){
 			initFuncRetry();
 			this.initRetryRule();
