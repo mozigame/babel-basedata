@@ -47,7 +47,7 @@ public class RetryRuleLoader  implements IContextTaskLoader {
 		return ret;
 	}
 	
-	@Scheduled(fixedRate = 180000)//3分钟加载一次
+	@Scheduled(fixedRate = 1800000)//30分钟加载一次
 	public void reloadRetry(){
 		boolean isBasedata=SpringContextUtil.containsBean("dataSourceBasedata");
 		log.debug("-----reloadRetry--isBasedata="+isBasedata);
