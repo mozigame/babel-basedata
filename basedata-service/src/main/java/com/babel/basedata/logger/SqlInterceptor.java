@@ -113,6 +113,7 @@ public class SqlInterceptor implements Interceptor {
 			if(ignoreSqlType==null){
 				ignoreSqlType="null";
 			}
+			System.out.println("---sql="+sql);
 			
 			if(isIgnore(sqlType, sql, ignoreSqlType)){
 				logger.debug("-----ignoreSqlType sqlId="+sqlId+":"+runTime+"ms"+":"+sql);
@@ -178,8 +179,8 @@ public class SqlInterceptor implements Interceptor {
 				logger.error("----intercept--method="+classMethod+" error:"+e.getMessage(), e);
 				throw e;
 			}
-			if(logSqlManager!=null && "true".equals(sqlLogDb))
-				this.logSqlManager.addLogSqlAsync(startTime, sqlId, sql, runTime, e, paramMap);
+//			if(logSqlManager!=null && "true".equals(sqlLogDb))
+//				this.logSqlManager.addLogSqlAsync(startTime, sqlId, sql, runTime, e, paramMap);
 			throw e;
 		}
 		return returnValue;
