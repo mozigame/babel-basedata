@@ -89,6 +89,8 @@ public class LogLoginPO extends BaseEntity {
      */
     private String other;
 
+    private String origin;
+
     /**
      * 获取登入日志
      *
@@ -321,6 +323,15 @@ public class LogLoginPO extends BaseEntity {
      */
     public void setOther(String other) {
         this.other = other;
+    }
+
+
+    public String getOrigin() {
+        return origin;
+    }
+
+    public void setOrigin(String origin) {
+        this.origin = origin;
     }
 
     @Override
